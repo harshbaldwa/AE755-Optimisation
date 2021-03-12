@@ -37,7 +37,7 @@ def area_overlap_sr(dx, dy, alpha, rr):
 area_overlap = np.vectorize(area_overlap_sr, otypes=[np.float64])
 
 
-def eta(x, y,wx, wy, pk, alpha, rr, a):
+def AEP(x, y,wx, wy, alpha, rr, a, pk, rho, Cp):
     X = np.vstack([x,y])
 
     n = len(x)
@@ -59,6 +59,7 @@ def eta(x, y,wx, wy, pk, alpha, rr, a):
     u = u0*(1-udefAoA)
     u3 = u**3
     u3s = np.sum(u3)
-    eta = u3s*pk/(n*u0)
-
-    return(eta)
+    Ar = np.pi*rr*rr
+    t = 3600*24*365
+    aep = u3s*pk*rho*Ar*Cp*t
+    return(aep)
