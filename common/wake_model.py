@@ -40,7 +40,7 @@ def area_overlap_sr(dx, dy, alpha, rr):
 area_overlap = np.vectorize(area_overlap_sr, otypes=[np.float64])
 
 
-def aep(layout, w, alpha, rr, rho=1.225, Cp=0.4, a=1 / 3):
+def aep(layout, w, alpha, rr, rho=1.225, Cp=0.4, a=1/3):
     wx = w[0]
     wy = w[1]
     pk = 1
@@ -49,7 +49,7 @@ def aep(layout, w, alpha, rr, rho=1.225, Cp=0.4, a=1 / 3):
     X = np.vstack([x, y])
 
     n = len(x)
-    theta = np.atan2(wy, wx)
+    theta = np.arctan2(wy, wx)
     u0 = np.sqrt(wx ** 2 + wy ** 2)
 
     rot = np.array([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])

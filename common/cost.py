@@ -1,7 +1,7 @@
 import math
 import numpy as np
-from .wake_model import aep
-from .constraint_check import penalty_function
+from wake_model import aep
+from constraint_check import penalty_function
 
 
 def obj(layout):  # OBJECTIVE FUNCTION THAT WE'RE TRYING TO MINIMISE
@@ -9,7 +9,7 @@ def obj(layout):  # OBJECTIVE FUNCTION THAT WE'RE TRYING TO MINIMISE
     SP = 0.02  # selling price in $/kWhr
     r_i = 0.02  # interest rate - inflation rate
     T = 20  # lifespan of farm in years
-    N = 0.5 * len(layout)  # number of turbines
+    N = int(0.5 * len(layout))  # number of turbines
     P_rated = 1.5  # Rated power of a single turbine in kW
     D = 40  # Rotor Diameter in m
     Z_H = 82  # Hub height of rotor in m

@@ -12,10 +12,10 @@ class Layout:
         self.layout = layout
 
 
-def random_layout(N, x_bound, y_bound, diameter):
-    grid_size = 5 * diameter
+def random_layout(N, x_bound, y_bound, grid_size):
     A = int((x_bound[1] - x_bound[0]) / grid_size)
     B = int((y_bound[1] - y_bound[0]) / grid_size)
+    print(A, B)
     random_grids = random.sample(range(A * B), N)
     X = np.zeros(N)
     Y = np.zeros(N)
