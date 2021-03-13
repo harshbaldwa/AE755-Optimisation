@@ -9,7 +9,10 @@ from pysph.base.utils import get_particle_array
 from cyarray.api import UIntArray
 import numpy as np
 
-def penalty_function(pos, boundary_limits=[[0.0, 10.0], [0.0, 10.0]], diameter=0.2, rho=1.0):
+
+def penalty_function(
+    pos, boundary_limits=[[0.0, 10.0], [0.0, 10.0]], diameter=0.2, rho=1.0
+):
     """
     pos: Array containing positions of the turbines. Format - [x1, y1, x2, y2 ...]
     boundary limits: [[x1, x2], [y1, y2]]
@@ -25,7 +28,7 @@ def penalty_function(pos, boundary_limits=[[0.0, 10.0], [0.0, 10.0]], diameter=0
 
     beta1 = 0.0
 
-    turbines = get_particle_array(x=x, y=y, h=5*diameter)
+    turbines = get_particle_array(x=x, y=y, h=5 * diameter)
     nps = nnps.LinkedListNNPS(dim=2, particles=[turbines, turbines], radius_scale=1)
 
     src_index, dst_index = 0, 1
@@ -37,7 +40,9 @@ def penalty_function(pos, boundary_limits=[[0.0, 10.0], [0.0, 10.0]], diameter=0
         nps.get_nearest_particles(src_index, dst_index, i, nbrs)
         neighbours = nbrs.get_npy_array()
         for j in range(len(neighbours)):
-            distance = np.sqrt((x[i] - x[neighbours[j]])**2 + (y[i] - y[neighbours[j]])**2)
+            distance = np.sqrt(
+                (x[i] - x[neighbours[j]]) ** 2 + (y[i] - y[neighbours[j]]) ** 2
+            )
             beta1 += distance
 
     # beta2 calculation
@@ -51,17 +56,15 @@ def penalty_function(pos, boundary_limits=[[0.0, 10.0], [0.0, 10.0]], diameter=0
     idx1 = x > xlimits[1]
     idx2 = y > ylimits[1]
 
-    beta3 = abs(x[idx1] - xlimits[1]).sum() + abs(y[idx2]- ylimits[1]).sum()
+    beta3 = abs(x[idx1] - xlimits[1]).sum() + abs(y[idx2] - ylimits[1]).sum()
 
     # beta calculation (penalty function)
 
-    beta = (rho * beta1)**2 + (rho * (beta2 + beta3)**2)
+    beta = (rho * beta1) ** 2 + (rho * (beta2 + beta3) ** 2)
 
     return beta
 
 
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     # print(check_constraints([0.0, 1.1], [0.0, 0.2]))
     print(penalty_function([0.0, 0.0, 1.0], [5.1, -5.7, 8.0]))
