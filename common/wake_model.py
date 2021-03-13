@@ -37,7 +37,10 @@ def area_overlap_sr(dx, dy, alpha, rr):
 area_overlap = np.vectorize(area_overlap_sr, otypes=[np.float64])
 
 
-def aep(layout, wx, wy, alpha, rr, pk, rho, Cp, a = 1/3):
+def aep(layout, w, alpha, rr, rho=1.225, Cp=0.4, a = 1/3):
+    wx = w[0]
+    wy = w[1]
+    pk = 1
     x = layout[::2]
     y = layout[1::2]
     X = np.vstack([x,y])
