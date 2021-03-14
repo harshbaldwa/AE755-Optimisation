@@ -65,6 +65,6 @@ def penalty_function(
     return beta
 
 
-if __name__ == "__main__":
-    # print(check_constraints([0.0, 1.1], [0.0, 0.2]))
-    print(penalty_function([0.0, 0.0, 1.0], [5.1, -5.7, 8.0]))
+# if __name__ == "__main__":
+#     # print(check_constraints([0.0, 1.1], [0.0, 0.2]))
+#     print(penalty_function([0.0, 0.0, 1.0]))
