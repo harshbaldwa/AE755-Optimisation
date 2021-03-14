@@ -52,16 +52,26 @@ if __name__=="__main__":
     ybound = [0, ymax]
     grid = 200
     n = 10
+    # sim anneal related parameters
+    alpha = 0.98
+    pert_max = 200
+    Tmax = 1
+    Tmin = 0.001
+    Markov_no = 10
+
+
     layout = random_layout(n, xbound, ybound, grid).layout
 
 #    layout = Layout( np.ones(n)*1000, np.linspace(10, xmax, n), n).layout
     plt.plot(layout[::2], layout[1::2], "b*")
+    cost_in = obj(layout, xbound, ybound)
+    print("initial_cost = \t"+ str(cost_in))
 
-    print("initial_cost = "+ str(obj(layout, xbound, ybound)))
 
-
-    xf , cb= annealing(layout, obj, xbound, ybound, 1, 0.001,0.9, 90, 200 )
-    print("final cost = "+ str(cb))
+    xf , cb= annealing(layout, obj, xbound, ybound, Tmax, Tmin,alpha, Markov_no, pert_max )
+    print("final cost =   \t"+ str(cb))
 
     plt.plot(xf[::2], xf[1::2], "ro")
+    plt.title(str(cb)+"\t "+str(cost_in))
+    plt.savefig("sim_an.png")
     plt.show()
