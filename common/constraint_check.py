@@ -23,6 +23,9 @@ def penalty_function(
     x = pos[::2]
     y = pos[1::2]
 
+    if not(len(x) == len(y)):
+        print("Number of x coordinates and y cooridnates are different")
+
     xlimits = boundary_limits[0]
     ylimits = boundary_limits[1]
 
@@ -66,5 +69,4 @@ def penalty_function(
 
 
 if __name__ == "__main__":
-    # print(check_constraints([0.0, 1.1], [0.0, 0.2]))
-    print(penalty_function([0.0, 0.0, 1.0], [5.1, -5.7, 8.0]))
+    print(penalty_function(np.array([0.0, 0.0, 1.0, 5.1, -5.7, 8.0])))
