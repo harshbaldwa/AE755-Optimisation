@@ -24,7 +24,7 @@ def annealing(x0, fn_obj,xbound, ybound, Tmax, Tmin, alpha, Markov_no, per_max):
             for k in range(n):
                 xi = perturb_state(x, per_max, k)
                 cost_i = fn_obj(xi, xbound, ybound)
-                dcost = cost - cost_i
+                dcost = cost_i - cost
 
                 if dcost < 0:
                     x = xi.copy()
@@ -45,9 +45,23 @@ if __name__=="__main__":
     from ..common.layout import Layout, random_layout
     from ..common.cost import obj
 
-    layout = random_layout(10, [0, 2000], [0, 2000], 200).layout
+    from ..common.test_functions import Bohachevsky, himmel
+    xmax = 2000
+    ymax = 2000
+    xbound = [0, xmax]
+    ybound = [0, ymax]
+    grid = 200
+    n = 10
+    layout = random_layout(n, xbound, ybound, grid).layout
 
-    xf = annealing(layout, obj, [0, 2000], [0, 2000], 1, 0.0001,0.98, 100, 200 )
+#    layout = Layout( np.ones(n)*1000, np.linspace(10, xmax, n), n).layout
+    plt.plot(layout[::2], layout[1::2], "b*")
 
-    plt.plot(xf[::2], xf[1::2], "o")
+    print("initial_cost = "+ str(obj(layout, xbound, ybound)))
+
+
+    xf , cb= annealing(layout, obj, xbound, ybound, 1, 0.001,0.9, 90, 200 )
+    print("final cost = "+ str(cb))
+
+    plt.plot(xf[::2], xf[1::2], "ro")
     plt.show()
