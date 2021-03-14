@@ -1,7 +1,7 @@
 import math
 import numpy as np
-from wake_model import aep
-from constraint_check import penalty_function
+from .wake_model import aep
+from .constraint_check import penalty_function
 
 
 def obj(layout, x_bound, y_bound):  # OBJECTIVE FUNCTION THAT WE'RE TRYING TO MINIMISE
@@ -22,7 +22,7 @@ def obj(layout, x_bound, y_bound):  # OBJECTIVE FUNCTION THAT WE'RE TRYING TO MI
     L_coll = 0
     for i in range(N):
         L_coll += np.sqrt(
-            layout[2 * i] ** 2 + layout[2 * i + 1]
+            layout[2 * i] ** 2 + layout[2 * i + 1]**2
         )  # Assuming turbine-wise coordinates
 
     C_RNA = 1170 * P_rated * N

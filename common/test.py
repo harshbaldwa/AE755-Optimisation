@@ -3,8 +3,11 @@ import numpy as np
 import layout as lyt
 import matplotlib.pyplot as plt
 
+# Random layout
 #layout_1 = lyt.random_layout(1, [0, 2000], [0, 2000], 200).layout
+#All the turbines in one vertical
 #layout_1 = lyt.Layout(np.ones(30)*1000, np.linspace(100, 1900, 30), 30).layout
+# All in one horizontal
 layout_1 = lyt.Layout( np.linspace(100, 1900, 30),np.ones(30)*1000, 30).layout
 alpha = 0.5/(np.log(60/0.3))
 
