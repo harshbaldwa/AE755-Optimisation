@@ -15,13 +15,13 @@ class Layout:
 def random_layout(N, x_bound, y_bound, grid_size):
     A = int((x_bound[1] - x_bound[0]) / grid_size)
     B = int((y_bound[1] - y_bound[0]) / grid_size)
-    random_grids = random.sample(range(A * B), N)
+    random_grids = np.random.randint(0, A*B, N)
     X = np.zeros(N)
     Y = np.zeros(N)
     for i in range(N):
         row_num = random_grids[i] % A
         col_num = (random_grids[i] - row_num) / A
-        X[i] = col_num * grid_size + grid_size / 2
-        Y[i] = row_num * grid_size + grid_size / 2
+        X[i] = x_bound[0] + col_num * grid_size + grid_size / 2
+        Y[i] = y_bound[0] + row_num * grid_size + grid_size / 2
 
     return Layout(X, Y, N)

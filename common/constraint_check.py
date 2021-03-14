@@ -11,7 +11,7 @@ import numpy as np
 
 
 def penalty_function(
-    pos, boundary_limits=[[0.0, 10.0], [0.0, 10.0]], diameter=0.2, rho=1.0
+    pos, boundary_limits=[[0, 4000], [0, 3500]], diameter=40, rho=1.0
 ):
     """
     pos: Array containing positions of the turbines. Format - [x1, y1, x2, y2 ...]

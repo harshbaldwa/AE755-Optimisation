@@ -17,7 +17,7 @@ def obj(layout, x_bound, y_bound):  # OBJECTIVE FUNCTION THAT WE'RE TRYING TO MI
     A = 0.25 * np.pi * D * D
 
     alpha = 0.5 / (math.log(Z_H / Z_0))
-    AEP = aep(layout, [1, 0], alpha, D / 2)
+    AEP = aep(layout, [12, 0], alpha, D/2)
 
     L_coll = 0
     for i in range(N):
