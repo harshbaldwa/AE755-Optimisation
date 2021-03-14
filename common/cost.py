@@ -4,7 +4,7 @@ from wake_model import aep
 from constraint_check import penalty_function
 
 
-def obj(layout):  # OBJECTIVE FUNCTION THAT WE'RE TRYING TO MINIMISE
+def obj(layout, x_bound, y_bound):  # OBJECTIVE FUNCTION THAT WE'RE TRYING TO MINIMISE
 
     SP = 0.02  # selling price in $/kWhr
     r_i = 0.02  # interest rate - inflation rate
@@ -12,7 +12,7 @@ def obj(layout):  # OBJECTIVE FUNCTION THAT WE'RE TRYING TO MINIMISE
     N = int(0.5 * len(layout))  # number of turbines
     P_rated = 1.5  # Rated power of a single turbine in kW
     D = 40  # Rotor Diameter in m
-    Z_H = 82  # Hub height of rotor in m
+    Z_H = 60  # Hub height of rotor in m
     Z_0 = 0.3  # Hub height of rotor in m
     A = 0.25 * np.pi * D * D
 
@@ -51,4 +51,4 @@ def obj(layout):  # OBJECTIVE FUNCTION THAT WE'RE TRYING TO MINIMISE
 
     LPC = C_inv / (a * AEP) + C_OM / AEP
 
-    return (LPC - SP) * AEP + penalty_function(layout)
+    return (LPC - SP) * AEP + penalty_function(layout, boundary_limits = [x_bound, y_bound], diameter=D)

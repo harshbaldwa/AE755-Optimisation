@@ -20,12 +20,18 @@ def area_overlap_sr(dx, dy, alpha, rr):
         # partially inside wake
         y_int = (r12 - rr2 + dy ** 2) / (2 * dy)
         x_int = np.sqrt(r12 - y_int ** 2)
+<<<<<<< HEAD
         # print(x_int, y_int)
+=======
+>>>>>>> upstream/master
 
         theta1 = math.atan2(x_int, y_int)
         thetar = math.atan2(x_int, dy - y_int)
 
+<<<<<<< HEAD
         # print(theta1, thetar)
+=======
+>>>>>>> upstream/master
         s1 = theta1 * r12
         sr = thetar * rr2
         t1 = y_int * x_int
