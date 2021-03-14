@@ -1,0 +1,5 @@
+*.pyc
+pysph/
+env/
+.vscode/
+common/genetic.py
