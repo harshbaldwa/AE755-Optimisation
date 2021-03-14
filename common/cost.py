@@ -46,7 +46,8 @@ def obj(layout, x_bound, y_bound):  # OBJECTIVE FUNCTION THAT WE'RE TRYING TO MI
 
     a = (1 - 1 / ((1 + r_i) ** T)) / r_i
 
-    C_inv = C_RNA + C_SS + C_elec + C_decom
+    # C_inv = C_RNA + C_SS + C_elec + C_decom
+    C_inv = C_RNA + C_SS + C_decom
     C_OM = 0.25 * C_inv / a
 
     LPC = C_inv / (a * AEP) + C_OM / AEP
