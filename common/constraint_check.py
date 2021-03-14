@@ -23,6 +23,9 @@ def penalty_function(
     x = pos[::2]
     y = pos[1::2]
 
+    if not(len(x) == len(y)):
+        print("Number of x coordinates and y cooridnates are different")
+
     xlimits = boundary_limits[0]
     ylimits = boundary_limits[1]
 
