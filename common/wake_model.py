@@ -59,7 +59,7 @@ def aep(layout, w, alpha, rr, rho=1.225, Cp=0.4, a=1/3):
         dx = X[0, :] - X[0, i]
         dy = X[1, :] - X[1, i]
         Ao = area_overlap(dx, dy, alpha, rr)
-        udef = 2 * a / ((1 + alpha * dx) ** 2)
+        udef = 2 * a / ((1 + alpha * dx/rr) ** 2)
         udefAo2 = udefAo2 + (udef * Ao) ** 2
     udefAoA = np.sqrt(udefAo2) / (np.pi * rr * rr)
     u = u0 * (1 - udefAoA)
@@ -67,5 +67,5 @@ def aep(layout, w, alpha, rr, rho=1.225, Cp=0.4, a=1/3):
     u3s = np.sum(u3)
     Ar = np.pi * rr * rr
     t = 3600 * 24 * 365
-    aep = u3s * pk * rho * Ar * Cp * t
-    return aep
+    Aep = u3s * pk * rho * Ar * Cp * t
+    return Aep
