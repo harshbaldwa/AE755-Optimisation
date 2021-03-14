@@ -1,6 +1,6 @@
 import numpy as np
-from wake_model import aep
-from cost import obj
+from ..common.wake_model import aep
+from ..common.cost import obj
 
 
 def relocate_turbines(x, y, boundary_limits=[[0.0, 1.0], [0.0, 1.0]], n_weak_turbines=5, n_reloc_attempts=15, diameter=82):
@@ -15,7 +15,8 @@ def relocate_turbines(x, y, boundary_limits=[[0.0, 1.0], [0.0, 1.0]], n_weak_tur
     positions[1::2] = y
 
     for i in range(len(x)):
-        power_produced[i] = aep(np.array(x[i], y[i]), [1, 0], alpha=alpha, rr=0.5*diameter)
+        position = np.array([x[i], y[i]])
+        power_produced[i] = aep(position, [1, 0], alpha=alpha, rr=0.5*diameter)
 
 
     # power_produced = get_power(x, y) # get power produced by the turbines
@@ -31,7 +32,7 @@ def relocate_turbines(x, y, boundary_limits=[[0.0, 1.0], [0.0, 1.0]], n_weak_tur
         idx = np.argmin(power_produced) #identify the weakest turbine
 
         # E = 0 # objective function call
-        E = obj(positions)
+        E = -1*obj(positions)
 
         x_pos = x.copy()
         y_pos = y.copy()
@@ -51,7 +52,7 @@ def relocate_turbines(x, y, boundary_limits=[[0.0, 1.0], [0.0, 1.0]], n_weak_tur
 
             E_relocated = obj(pos_new)
 
-            if E_relocated < E:
+            if E_relocated > E:
                 x = x_pos
                 y = y_pos
                 break;
@@ -61,7 +62,7 @@ def relocate_turbines(x, y, boundary_limits=[[0.0, 1.0], [0.0, 1.0]], n_weak_tur
                 y_pos = y.copy()
 
         for i in range(len(x)): # get power produced by the turbines
-            power_produced[i] = aep(np.array(x[i], y[i]), [1, 0], alpha=alpha, rr=0.5*diameter)
+            power_produced[i] = aep(np.array([x[i], y[i]]), [1, 0], alpha=alpha, rr=0.5*diameter)
 
     return x, y
 
