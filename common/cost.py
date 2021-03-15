@@ -17,7 +17,7 @@ def obj(layout, x_bound=[0, 4000], y_bound=[0, 3500]):  # OBJECTIVE FUNCTION THA
     A = 0.25 * np.pi * D * D
 
     alpha = 0.5 / (math.log(Z_H / Z_0))
-    AEP = aep(layout, [12, 0], alpha, D/2)
+    AEP = aep(layout, [12, 0], alpha, D/2)/3.6e6
 
     L_coll = 0
     for i in range(N):
