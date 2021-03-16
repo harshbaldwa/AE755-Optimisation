@@ -52,5 +52,5 @@ def aep(layout, w, alpha, rr, rho=1.225, Cp=0.4, a=1/3):
     u3s = np.sum(u3)
     Ar = np.pi * rr * rr
     t = 3600 * 24 * 365
-    Aep = u3s * pk * rho * Ar * Cp * t
+    Aep = 0.5 * u3s * pk * rho * Ar * Cp * t
     return Aep
