@@ -1,8 +1,7 @@
 import math
 import numpy as np
 from .wake_model import aep
-from .constraint_check import penalty_function
-
+# from .constraint_check import penalty_function
 
 def obj(layout, x_bound=[0, 4000], y_bound=[0, 3500]):  # OBJECTIVE FUNCTION THAT WE'RE TRYING TO MINIMISE
 
@@ -17,7 +16,8 @@ def obj(layout, x_bound=[0, 4000], y_bound=[0, 3500]):  # OBJECTIVE FUNCTION THA
     A = 0.25 * np.pi * D * D
 
     alpha = 0.5 / (math.log(Z_H / Z_0))
-    AEP = aep(layout, [12, 0], alpha, D/2)/3.6e6
+    AEP, penalty = aep(layout=layout, w=[12, 0], alpha=alpha, rr=D/2, boundary_limits=[x_bound, y_bound])
+    # AEP = aep(layout, [12, 0], alpha, D/2)/3.6e6
 
     L_coll = 0
     for i in range(N):
@@ -50,10 +50,11 @@ def obj(layout, x_bound=[0, 4000], y_bound=[0, 3500]):  # OBJECTIVE FUNCTION THA
     C_OM = 0.25 * C_inv / a
 
     LPC = C_inv / (a * AEP) + C_OM / AEP
-    penalty = penalty_function(layout, boundary_limits = [x_bound, y_bound], diameter=D)
+    # penalty = penalty_function(layout, boundary_limits = [x_bound, y_bound], diameter=D)
     objective = (LPC - SP) * AEP + penalty
     # print(penalty, "penalty")
     # print(objective, "objective")
 
     # return (LPC - SP) * AEP + penalty_function(layout, boundary_limits = [x_bound, y_bound], diameter=D)
+    # print(penalty)
     return objective
