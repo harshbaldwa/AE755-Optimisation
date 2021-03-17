@@ -8,6 +8,23 @@ Rohit + Hetvee - Wake + Simulated Anenealing
 
 Amal + Malhar - Neighbour search + Pattern search
 
+## Results
+### N = 26 (single direction)
+
+Parameters:
+
+    Hub height = 60m
+    Rotor Diameter = 40m
+    x_bound = [0, 2000]
+    y_bound = [0, 2000]
+
+Cost function: use both (tejas and mosetti)
+
+Wake visualization
+
+Run time analysis
+
+
 ## running simulated annealing
 run from parent folder of this repo.
 

@@ -80,14 +80,6 @@ class Population:
         self.pop_matrix[:, 1:] = np.reshape(reshaped_pop, (self.n_pop, 2 * self.N))
 
 # just for testing!
-# pop_size = 501
-# x_bound = [-6, 6]
-# y_bound = [-6, 6]
-# n_turbines = 1
-# elitism_rate = 0.01
-# crossover_rate = 0.8
-# mutation_rate = 0.508
-# grid_size = 0.01
 
 pop_size = 501
 x_bound = [0, 4000]
@@ -103,7 +95,7 @@ oldPop.initialise_random()
 # plt.plot(oldPop.pop_matrix[0, 1::2], oldPop.pop_matrix[0, 2::2], 'bo')
 oldPop.fitness_pop()
 
-for i in range(50):
+for i in range(10):
     newPop = Population(pop_size, x_bound, y_bound, n_turbines, elitism_rate, crossover_rate, mutation_rate, grid_size)
     newPop.elitism(oldPop.pop_matrix)
     newPop.crossover_greedy(oldPop.pop_matrix)
