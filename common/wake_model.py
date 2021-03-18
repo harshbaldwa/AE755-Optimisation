@@ -67,7 +67,7 @@ def aep(layout, w, alpha, rr, boundary_limits=[[0, 2000], [0, 2000]], rho=1.225,
         udef = 2 * a / ((1 + alpha * dx/rr) ** 2)
         udefAo2 = udefAo2 + (udef * Ao) ** 2
     
-        penalty = penalty_function(x, y, dx_full, dy_full, 10*rr, boundary_limits)
+    penalty = penalty_function(x, y, dx_full, dy_full, 10*rr, boundary_limits)
     
     udefAoA = np.sqrt(udefAo2) / (np.pi * rr * rr)
     u = u0 * (1 - udefAoA)

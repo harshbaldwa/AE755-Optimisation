@@ -76,7 +76,8 @@ def get_wake_plots(x, y, n, avg_cost, best_cost, time_taken, wind_dir=[12, 0]):
     plt.ylim(0, 2000)
     plt.title("avg_cost:{:.3e}, best_cost:{:.3e}, time:{:.3e}".format(avg_cost, best_cost, time_taken))
     plt.gca().set_aspect('equal')
-    plt.savefig("mosetti_obj/mosetti_n{}.png".format(n))
+    # plt.savefig("mosetti_obj/mosetti_n{}.png".format(n))
+    plt.show()
     # plt.plot(x_lines, y_lines)
 
 
