@@ -24,7 +24,7 @@ def get_turbine_lines(x, y, wind):
 
         plt.plot([pos1[0], pos2[0]], [pos1[1], pos2[1]], color='red')
 
-        dist = 12.2*np.sqrt(2)*R
+        dist = 12.2*R
         rl = alpha*dist + R
 
         pos4 = turbine_pos + np.array([dist, rl])
@@ -40,7 +40,7 @@ def get_turbine_circles(x, y, wind):
     Z_0 = 0.3  # Hub height of rotor in m
     alpha = 0.5 / (np.log(Z_H / Z_0))
     diameter = 40
-    R = 5 * diameter
+    R = 2.5 * diameter
 
     x_lines, y_lines = [], []
     for i in range(len(x)):
@@ -54,7 +54,7 @@ def get_turbine_circles(x, y, wind):
         x_range = np.concatenate((x_range, x_range[::-1]))
 
 
-        plt.fill(x_range, y_range, facecolor='lightsteelblue', edgecolor='royalblue', alpha=0.25)
+        plt.fill(x_range, y_range, facecolor='lightsteelblue', edgecolor='royalblue', alpha=0.2)
         # plt.fill(x_range, y_range_2, facecolor='lightsteelblue', edgecolor='royalblue', alpha=0.25)
 
 
@@ -62,18 +62,21 @@ def get_turbine_circles(x, y, wind):
 
 
 
-def get_wake_plots(x, y, wind_dir=[12, 0]):
+def get_wake_plots(x, y, n, avg_cost, best_cost, time_taken, wind_dir=[12, 0]):
     """
     x, y: 1D arays are turbines coordinates
     wind: 1x2 array of x and y components of the wind.
     """
 
+    fig = plt.figure()
     get_turbine_lines(x, y, wind_dir)
     get_turbine_circles(x, y, wind_dir)
     plt.scatter(x, y, color='black')
     plt.xlim(0, 2000)
     plt.ylim(0, 2000)
-    plt.show()
+    plt.title("avg_cost:{:.3e}, best_cost:{:.3e}, time:{:.3e}".format(avg_cost, best_cost, time_taken))
+    plt.gca().set_aspect('equal')
+    plt.savefig("mosetti_obj/mosetti_n{}.png".format(n))
     # plt.plot(x_lines, y_lines)
 
 
