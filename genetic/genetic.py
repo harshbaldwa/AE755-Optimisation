@@ -1,5 +1,3 @@
-# not been tested yet!
-# importing is broken, need to fix that
 from ..common import mosetti_cost
 import random
 import numpy as np
@@ -7,7 +5,6 @@ from ..common import layout
 from ..common.wake_visualization import get_wake_plots
 import time
 import matplotlib.pyplot as plt
-import sys
 
 
 class Population:
@@ -187,16 +184,17 @@ for i in range(400):
     # if best_cost < cost_value[0]:
     #     best_cost = cost_value[0]
     #     best_layout = newPop.pop_matrix[0, 1:]
-    print(
-        "{:0=3d} generation\nCost1: {}\nCost2: {}\nCost3: {}\nCost4: {}\nCost5: {}".format(
-            i + 1,
-            newPop.pop_matrix[0, 0],
-            newPop.pop_matrix[1, 0],
-            newPop.pop_matrix[2, 0],
-            newPop.pop_matrix[3, 0],
-            newPop.pop_matrix[4, 0],
-        )
-    )
+    # print(
+    #     "{:0=3d} generation\nCost1: {}\nCost2: {}\nCost3: {}\nCost4: {}\nCost5: {}".format(
+    #         i + 1,
+    #         newPop.pop_matrix[0, 0],
+    #         newPop.pop_matrix[1, 0],
+    #         newPop.pop_matrix[2, 0],
+    #         newPop.pop_matrix[3, 0],
+    #         newPop.pop_matrix[4, 0],
+    #     )
+    # )
+    print(i, " - ", newPop.pop_matrix[0:5, 0])
     fitness[i] = newPop.pop_matrix[0, 0]
     oldPop = newPop
 
