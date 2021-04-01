@@ -8,6 +8,6 @@ def mosetti(x, x_bound=[0, 2000], y_bound=[0, 2000]):
     P, penalty = aep(x, [12, 0], alpha, 20, [x_bound, y_bound])
     # print(penalty)
 
-    return (0.33*1/P + 0.66*cost/P) + 1e-6*penalty, cost/P, P
+    return (0.33*1/P + 0.66*cost/P) + 1e-5*penalty, cost/P, P, penalty
     # return 10*(cost/P) + 0.01*penalty, cost/P
     # return cost/P
