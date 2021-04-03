@@ -1,40 +1,25 @@
 # AE755 - Optimisation
 
-## Tasks
-
-Harsh + Tejas - Objective function + Genetic
-
-Rohit + Hetvee - Wake + Simulated Anenealing
-
-Amal + Malhar - Neighbour search + Pattern search
-
 ## Results
-### N = 26 (single direction)
+### Genetic Algorithm
 
-Parameters:
+User parameters:
 
-    Hub height = 60m
-    Rotor Diameter = 40m
-    x_bound = [0, 2000]
-    y_bound = [0, 2000]
+    Number of turbines: 25
+    Cost Function: Mosetti
+    Wind Speed: 12 m/s
+    Hub height: 60 m
+    Rotor diameter: 40 m
+    Wind Farm: 2000 x 2000 m^2
 
-Cost function: use both (tejas and mosetti)
+Algorithm parameters:
 
-Wake visualization
+    Number of generations: 150
+    Population size: 200
+    Elite Number: 10
+    Crossover fraction: 0.8
+    Mutated genes: 2 (each single parent)
 
-Run time analysis
+Lowest Cost: 0.001023
 
-
-## running simulated annealing
-run from parent folder of this repo.
-
-Suggested parameters:
-
-    alpha = 0.98
-    pert_max = 200
-    Tmax = 1
-    Tmin = 0.00001
-    Markov_no = 200
-
-`python3 -m  AE755-Optimisation.simulated.sim_anneal`
-
+![Genetic results](./results/ga_mosetti_25.png)

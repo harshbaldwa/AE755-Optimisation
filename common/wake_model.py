@@ -1,7 +1,4 @@
-#!/usr/bin/env python3
 import numpy as np
-import math
-
 
 def partial_overlap(rr, r1, dy):
     r12 = r1**2
@@ -74,11 +71,9 @@ def aep(layout, w, alpha, rr, boundary_limits, rho=1.225, Cp=0.4, a=1/3):
     u3 = u ** 3
     u3s = np.sum(u3)
     Ar = np.pi * rr * rr
-    # t = 3600 * 24 * 365
     Aep = 0.5 * u3s * pk * rho * Ar * Cp / 1000
     # Aep = power_vel_suzlon(u)*pk * 365 * 24
     return Aep, penalty
-    # return Aep
 
 
 def penalty_function(x, y, dx_full, dy_full, min_dist, boundary_limits, rho=1):

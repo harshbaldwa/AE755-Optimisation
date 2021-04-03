@@ -46,7 +46,7 @@ def get_turbine_circles(x, y, diameter):
 
 
 
-def get_wake_plots(x, y, bounds, diameter, height, z_0, wind_velocity):
+def get_wake_plots(x, y, bounds, diameter, height, z_0, wind_velocity, algo):
     """
     x, y: 1D arays are turbines coordinates
     wind: 1x2 array of x and y components of the wind.
@@ -56,8 +56,15 @@ def get_wake_plots(x, y, bounds, diameter, height, z_0, wind_velocity):
     get_turbine_lines(x, y, diameter, height, z_0, wind)
     get_turbine_circles(x, y, diameter)
     plt.scatter(x, y, color='black')
-    plt.xlim(bounds[0, 0], bounds[0, 1])
-    plt.ylim(bounds[1, 0], bounds[1, 1])
+    b1 = bounds[0][0]
+    b2 = bounds[0][1]
+    b3 = bounds[1][0]
+    b4 = bounds[1][1]
+    plt.plot([b1, b1, b2, b2, b1], [b3, b4, b4, b3, b3], color='black', linestyle="-", linewidth=0.5)
+    b_range = 0.2*np.array([bounds[0, 1] - bounds[0, 0], bounds[1, 1] - bounds[1, 0]])
+    plt.xlim(bounds[0, 0] - b_range[0], bounds[0, 1] + b_range[0])
+    plt.ylim(bounds[1, 0] - b_range[1], bounds[1, 1] + b_range[1])
+    plt.title(algo)
     plt.gca().set_aspect('equal')
     plt.show()
 
