@@ -2,7 +2,7 @@ import numpy as np
 from wake_model import aep
 # from constraint_check import penalty_function
 
-def obj(layout, x_bound=[0, 4000], y_bound=[0, 3500]):  # OBJECTIVE FUNCTION THAT WE'RE TRYING TO MINIMISE
+def obj(layout, x_bound, y_bound):  # OBJECTIVE FUNCTION THAT WE'RE TRYING TO MINIMISE
 
 
     SP = 0.02  # selling price in $/kWhr [0.02]
@@ -61,14 +61,14 @@ def obj(layout, x_bound=[0, 4000], y_bound=[0, 3500]):  # OBJECTIVE FUNCTION THA
 
     ### STOP MULTILINE COMMENT
 
-    x_min = np.min(layout[::2])
-    x_max = np.max(layout[::2])
-    y_min = np.min(layout[1::2])
-    y_max = np.max(layout[1::2])
-    area = (y_max - y_min)*(x_max - x_min)
-    land_cost = area*40878
+    # x_min = np.min(layout[::2])
+    # x_max = np.max(layout[::2])
+    # y_min = np.min(layout[1::2])
+    # y_max = np.max(layout[1::2])
+    # area = (y_max - y_min)*(x_max - x_min)
+    # land_cost = area*40878
 
-    objective = 1191241.17052 + 15.28918*L_coll + 521.550195949*N + 19.210518346*(N**0.751) - 0.02*AEP + 1e-4*land_cost + 1e4*penalty
+    objective = 1191241.17052 + 15.28918*L_coll + 521.550195949*N + 19.210518346*(N**0.751) - 0.02*AEP + 1e4*penalty
 
     # print(penalty, "penalty")
     # print(objective, "objective")

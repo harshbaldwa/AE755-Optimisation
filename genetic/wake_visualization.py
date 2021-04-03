@@ -8,9 +8,9 @@ from matplotlib.patches import Polygon
 def get_turbine_lines(x, y, wind):
     normal = np.array([-wind[1]/(wind[0]+np.finfo(float).eps), 1])
     normal = normal/np.linalg.norm(normal)
-    R = 20
+    R = 41
 
-    Z_H = 60  # Hub height of rotor in m
+    Z_H = 80  # Hub height of rotor in m
     Z_0 = 0.3  # Hub height of rotor in m
     alpha = 0.5 / (np.log(Z_H / Z_0))
 
@@ -36,10 +36,10 @@ def get_turbine_lines(x, y, wind):
         plt.fill(x_pos, y_pos, facecolor='lightsalmon', edgecolor='orangered', alpha=0.25)
 
 def get_turbine_circles(x, y, wind):
-    Z_H = 60  # Hub height of rotor in m
+    Z_H = 80  # Hub height of rotor in m
     Z_0 = 0.3  # Hub height of rotor in m
     alpha = 0.5 / (np.log(Z_H / Z_0))
-    diameter = 40
+    diameter = 82
     R = 2.5 * diameter
 
     x_lines, y_lines = [], []
@@ -81,10 +81,4 @@ def get_wake_plots(x, y, bounds, wind_dir=[12, 0]):
     plt.show()
     # plt.plot(x_lines, y_lines)
 
-
-if __name__ == "__main__":
-    x = np.random.random(5) * 1000
-    y = np.random.random(5) * 1000
-
-    get_wake_plots(x, y, wind_dir=[12, 0])
 
