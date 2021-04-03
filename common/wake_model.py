@@ -33,7 +33,7 @@ def area_overlap(dx, dy, alpha, rr):
     return a_ovp
 
 
-def aep(layout, w, alpha, rr, boundary_limits=[[0, 2000], [0, 2000]], rho=1.225, Cp=0.4, a=1/3):
+def aep(layout, w, alpha, rr, boundary_limits, rho=1.225, Cp=0.4, a=1/3):
     """[summary]
 
     Returns:

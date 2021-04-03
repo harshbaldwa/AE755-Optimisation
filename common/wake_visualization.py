@@ -62,7 +62,8 @@ def get_turbine_circles(x, y, wind):
 
 
 
-def get_wake_plots(x, y, n, avg_cost, best_cost, time_taken, wind_dir=[12, 0]):
+# def get_wake_plots(x, y, n, avg_cost, best_cost, time_taken, wind_dir=[12, 0]):
+def get_wake_plots(x, y, bounds, wind_dir=[12, 0]):
     """
     x, y: 1D arays are turbines coordinates
     wind: 1x2 array of x and y components of the wind.
@@ -72,18 +73,12 @@ def get_wake_plots(x, y, n, avg_cost, best_cost, time_taken, wind_dir=[12, 0]):
     get_turbine_lines(x, y, wind_dir)
     get_turbine_circles(x, y, wind_dir)
     plt.scatter(x, y, color='black')
-    plt.xlim(0, 2000)
-    plt.ylim(0, 2000)
-    plt.title("avg_cost:{:.3e}, best_cost:{:.3e}, time:{:.3e}".format(avg_cost, best_cost, time_taken))
+    plt.xlim(bounds[0, 0], bounds[0, 1])
+    plt.ylim(bounds[1, 0], bounds[1, 1])
+    # plt.title("avg_cost:{:.3e}, best_cost:{:.3e}, time:{:.3e}".format(avg_cost, best_cost, time_taken))
     plt.gca().set_aspect('equal')
     # plt.savefig("mosetti_obj/mosetti_n{}.png".format(n))
     plt.show()
     # plt.plot(x_lines, y_lines)
 
-
-if __name__ == "__main__":
-    x = np.random.random(5) * 1000
-    y = np.random.random(5) * 1000
-
-    get_wake_plots(x, y, wind_dir=[12, 0])
 

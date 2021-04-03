@@ -1,10 +1,10 @@
 # cost functions
-# from ..common import mosetti_cost as cost
-import mosetti_cost as cost
+from ..common import mosetti_cost as cost
+# import mosetti_cost as cost
 
 # visualization
-# from ..common.wake_visualization import get_wake_plots
-from wake_visualization import get_wake_plots
+from ..common.wake_visualization import get_wake_plots
+# from wake_visualization import get_wake_plots
 
 #other requirements
 import numpy as np
