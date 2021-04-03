@@ -24,7 +24,7 @@ def get_turbine_lines(x, y, wind):
 
         plt.plot([pos1[0], pos2[0]], [pos1[1], pos2[1]], color='red')
 
-        dist = 12.2*np.sqrt(2)*R
+        dist = 12.2*R
         rl = alpha*dist + R
 
         pos4 = turbine_pos + np.array([dist, rl])
@@ -40,7 +40,7 @@ def get_turbine_circles(x, y, wind):
     Z_0 = 0.3  # Hub height of rotor in m
     alpha = 0.5 / (np.log(Z_H / Z_0))
     diameter = 40
-    R = 5 * diameter
+    R = 2.5 * diameter
 
     x_lines, y_lines = [], []
     for i in range(len(x)):
@@ -71,8 +71,9 @@ def get_wake_plots(x, y, wind_dir=[12, 0]):
     get_turbine_lines(x, y, wind_dir)
     get_turbine_circles(x, y, wind_dir)
     plt.scatter(x, y, color='black')
-    plt.xlim(0, 2000)
-    plt.ylim(0, 2000)
+    # plt.xlim(0, 2000)
+    # plt.ylim(0, 2000)
+    plt.plot([0, 2000, 2000, 0, 0], [0, 0, 2000, 2000, 0])
     plt.show()
     # plt.plot(x_lines, y_lines)
 

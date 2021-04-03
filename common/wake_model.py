@@ -33,7 +33,7 @@ def area_overlap(dx, dy, alpha, rr):
     return a_ovp
 
 
-def aep(layout, w, alpha, rr, boundary_limits=[[0, 4000], [0, 3500]], rho=1.225, Cp=0.4, a=1/3):
+def aep(layout, w, alpha, rr, boundary_limits=[[0, 2000], [0, 2000]], rho=1.225, Cp=0.4, a=1/3):
     """[summary]
 
     Returns:
@@ -66,9 +66,9 @@ def aep(layout, w, alpha, rr, boundary_limits=[[0, 4000], [0, 3500]], rho=1.225,
         Ao = area_overlap(dx, dy, alpha, rr)
         udef = 2 * a / ((1 + alpha * dx/rr) ** 2)
         udefAo2 = udefAo2 + (udef * Ao) ** 2
-    
-        penalty = penalty_function(x, y, dx_full, dy_full, 10*rr, boundary_limits)
-    
+
+    penalty = penalty_function(x, y, dx_full, dy_full, 5*rr, boundary_limits)
+
     udefAoA = np.sqrt(udefAo2) / (np.pi * rr * rr)
     u = u0 * (1 - udefAoA)
     u3 = u ** 3
@@ -82,13 +82,16 @@ def aep(layout, w, alpha, rr, boundary_limits=[[0, 4000], [0, 3500]], rho=1.225,
 
 
 def penalty_function(x, y, dx_full, dy_full, min_dist, boundary_limits, rho=1):
-    dist = dx_full**2 + dy_full**2
+    # print(min_dist)
+    dist = np.sqrt(dx_full**2 + dy_full**2)
+    # print("dist", dist)
     n = len(dist)
-    dist[range(n), range(n)] = 1e5
+    dist[range(n), range(n)] = 1e10
     cond1 = dist < min_dist
     # print(min_dist - dist[cond1])
 
     beta1 = np.sum(min_dist - dist[cond1])/2
+    # print("distance penalty", beta1)
 
     xlimits = boundary_limits[0]
     ylimits = boundary_limits[1]
@@ -111,5 +114,5 @@ def penalty_function(x, y, dx_full, dy_full, min_dist, boundary_limits, rho=1):
     # print(beta3, "3")
 
 
-    beta = (rho * beta1) ** 2 + (rho * (beta2 + beta3) ** 2)
+    beta = (rho* 5 * beta1) ** 2 + (rho * (beta2 + beta3) ** 2)
     return beta

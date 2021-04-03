@@ -6,7 +6,7 @@ from ..common.cost import obj
 def relocate_turbines(x, y, boundary_limits=[[0.0, 1.0], [0.0, 1.0]], n_weak_turbines=5, n_reloc_attempts=15, diameter=82):
     power_produced = np.zeros_like(x)
 
-    Z_H = 82  # Hub height of rotor in m
+    Z_H = 60  # Hub height of rotor in m
     Z_0 = 0.3  # Hub height of rotor in m
     alpha = 0.5 / (np.log(Z_H / Z_0))
 
@@ -16,7 +16,7 @@ def relocate_turbines(x, y, boundary_limits=[[0.0, 1.0], [0.0, 1.0]], n_weak_tur
 
     for i in range(len(x)):
         position = np.array([x[i], y[i]])
-        power_produced[i] = aep(position, [12, 0], alpha=alpha, rr=0.5*diameter)
+        power_produced[i], penalty = aep(position, [12, 0], alpha=alpha, rr=0.5*diameter, boundary_limits=boundary_limits)
 
 
     # power_produced = get_power(x, y) # get power produced by the turbines
@@ -32,7 +32,7 @@ def relocate_turbines(x, y, boundary_limits=[[0.0, 1.0], [0.0, 1.0]], n_weak_tur
         idx = np.argmin(power_produced) #identify the weakest turbine
 
         # E = 0 # objective function call
-        E = -1*obj(positions)
+        E = obj(positions)
 
         x_pos = x.copy()
         y_pos = y.copy()
@@ -50,19 +50,19 @@ def relocate_turbines(x, y, boundary_limits=[[0.0, 1.0], [0.0, 1.0]], n_weak_tur
             pos_new[::2] = x_pos
             pos_new[1::2] = y_pos
 
-            E_relocated = -1*obj(pos_new)
+            E_relocated = obj(pos_new)
 
-            if E_relocated > E:
+            if E_relocated < E:
                 x = x_pos
                 y = y_pos
                 break;
 
-            else:
-                x_pos = x.copy()
-                y_pos = y.copy()
+            # else:
+            #     x_pos = x.copy()
+            #     y_pos = y.copy()
 
         for i in range(len(x)): # get power produced by the turbines
-            power_produced[i] = aep(np.array([x[i], y[i]]), [12, 0], alpha=alpha, rr=0.5*diameter)
+            power_produced[i], penalty = aep(np.array([x[i], y[i]]), [12, 0], alpha=alpha, rr=0.5*diameter)
 
     return x, y
 
