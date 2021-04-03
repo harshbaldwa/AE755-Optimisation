@@ -1,0 +1,4 @@
+- some single parent children with mutation
+- tournament selection 
+x uniform mutation
+x expectation values for parent selection
