@@ -79,7 +79,15 @@ try :
         new_pop = fitness(new_pop, n_pop, elit_num, bounds)
         print(gen, " - ", new_pop[0:5, 0])
         old_pop = new_pop
+
 except KeyboardInterrupt:
     print(new_pop[0, 1:])
     # new_bounds = np.array([[np.min(new_pop[0, 1::2]), np.max(new_pop[0, 1::2])], [np.min(new_pop[0, 2::2]), np.max(new_pop[0, 2::2])]])
     get_wake_plots(new_pop[0, 1::2], new_pop[0, 2::2], bounds)
+
+
+print(new_pop[0, 1:])
+# new_bounds = np.array([[np.min(new_pop[0, 1::2]), np.max(new_pop[0, 1::2])], [np.min(new_pop[0, 2::2]), np.max(new_pop[0, 2::2])]])
+get_wake_plots(new_pop[0, 1::2], new_pop[0, 2::2], bounds)
+
+
