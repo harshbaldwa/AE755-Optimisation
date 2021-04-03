@@ -1,5 +1,5 @@
 # cost functions
-from ..common import mosetti_cost as cost
+from ..common import cost as cost
 # visualization
 from ..common.wake_visualization import get_wake_plots
 #other requirements
@@ -47,12 +47,12 @@ def mutate(new_pop, old_pop, n_pop, mutat_num, n_var, mutat_gene, b_range):
 
 
 # turbine data
-diameter = 40
-height = 60
+diameter = 82
+height = 80
 z_0 = 0.3
 
 # turbines and farm
-N = 25
+N = 33
 n_var = 2*N
 bounds = np.array([[0, 2000], [0, 2000]])
 b_range = np.array([bounds[0, 1] - bounds[0, 0], bounds[1, 1] - bounds[1, 0]])
@@ -69,7 +69,7 @@ mutat_num = n_pop - elit_num - cross_num
 old_pop = np.zeros((n_pop, n_var + 1))
 new_pop = np.zeros((n_pop, n_var + 1))
 
-generations = 150
+generations = 200
 
 
 # start algorithm
@@ -87,10 +87,12 @@ try :
 
 except KeyboardInterrupt:
     print(new_pop[0, 1:])
-    get_wake_plots(new_pop[0, 1::2], new_pop[0, 2::2], bounds, diameter, height, z_0, wind_velocity, "Genetic")
+    # get_wake_plots(new_pop[0, 1::2], new_pop[0, 2::2], bounds, diameter, height, z_0, wind_velocity, "Genetic")
+    get_wake_plots(new_pop[0, 1::2], new_pop[0, 2::2], bounds, "Genetic")
 
 
 print(new_pop[0, 1:])
-get_wake_plots(new_pop[0, 1::2], new_pop[0, 2::2], bounds, diameter, height, z_0, wind_velocity, "Genetic")
+# get_wake_plots(new_pop[0, 1::2], new_pop[0, 2::2], bounds, diameter, height, z_0, wind_velocity, "Genetic")
+get_wake_plots(new_pop[0, 1::2], new_pop[0, 2::2], bounds, "Genetic")
 
 

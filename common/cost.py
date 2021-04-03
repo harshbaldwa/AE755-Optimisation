@@ -25,7 +25,7 @@ def objective(layout, boundary_limits, diameter, height, z_0, wind_velocity):  #
         )  # Assuming turbine-wise coordinates, calculating length of collection cables - cables running from each turbine to collection center at (0,0)
 
     alpha = 0.5 / (np.log(Z_H / Z_0))
-    AEP, penalty = aep(layout=layout, w=[wind_velocity, 0], alpha=alpha, rr=D/2, boundary_limits=boundary_limits)
+    AEP, penalty = aep(layout=layout, alpha=alpha, rr=D/2, boundary_limits=boundary_limits)
     AEP = AEP * 365 * 24
 
     ### START MULTILINE COMMENT, use commented lines if any of the parameters change from default values, indicated by []
@@ -68,6 +68,7 @@ def objective(layout, boundary_limits, diameter, height, z_0, wind_velocity):  #
     land_cost = area*40878
 
     obj = 1191241.17052 + 15.28918*L_coll + 521.550195949*N + 19.210518346*(N**0.751) - 0.02*AEP
-    obj += 1e-2*land_cost + 1e4*penalty
+    # obj += 1e-2*land_cost + 1e4*penalty
+    obj += 1e4*penalty
 
-    return obj
+    return obj, AEP
