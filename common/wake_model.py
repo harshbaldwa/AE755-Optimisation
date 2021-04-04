@@ -30,15 +30,14 @@ def area_overlap(dx, dy, alpha, r, rr):
 
     return a_ovp
 
-# def aep(layout, windspeed_array, theta_array, wind_prob, alpha, r, boundary_limits, rho=1.225, Cp=0.4, a=1/3):
-def aep(layout, alpha, r, boundary_limits, rho=1.225, Cp=0.4, a=1/3):
+def aep(layout, windspeed_array, theta_array, wind_prob, alpha, r, boundary_limits, rho=1.225, Cp=0.4, a=1/3):
+# def aep(layout, alpha, r, boundary_limits, rho=1.225, Cp=0.4, a=1/3):
     """[summary]
 
     Returns:
         [float]: [energy in kW year]
     """
 
-    windspeed_array, theta_array, wind_prob = read_windrose()
 
     rr = r*np.sqrt(2)
     Ar = np.pi * r * r
