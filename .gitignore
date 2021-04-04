@@ -2,3 +2,4 @@
 pysph/
 env/
 .vscode/
+common/windrose.py

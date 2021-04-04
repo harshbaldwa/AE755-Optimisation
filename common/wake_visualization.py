@@ -52,10 +52,10 @@ def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_a
     wind: 1x2 array of x and y components of the wind.
     """
     # wind = [wind_velocity, 0]
-    fig = plt.figure()
+    fig = plt.figure(figsize=(12, 12))
     get_turbine_lines(x, y, diameter, height, z_0, [windspeed_array[0], 0])
     get_turbine_circles(x, y, diameter)
-    plt.scatter(x, y, color='white')
+    plt.scatter(x, y, color='gray')
     b1 = bounds[0][0]
     b2 = bounds[0][1]
     b3 = bounds[1][0]
@@ -66,6 +66,6 @@ def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_a
     plt.ylim(bounds[1, 0] - b_range[1], bounds[1, 1] + b_range[1])
     plt.title(algo)
     plt.gca().set_aspect('equal')
-    plt.savefig('figure.png')
+    plt.savefig('results/figure.png')
 
 
