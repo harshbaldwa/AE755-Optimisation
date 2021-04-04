@@ -1,10 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
+plt.style.use('dark_background')
 
 def get_turbine_lines(x, y, diameter, height, z_0, wind):
     normal = np.array([-wind[1]/(wind[0]+np.finfo(float).eps), 1])
     normal = normal/np.linalg.norm(normal)
-    R = diameter/2
+    R = np.sqrt(2)*diameter/2
 
     Z_H = height
     Z_0 = z_0
@@ -16,7 +17,7 @@ def get_turbine_lines(x, y, diameter, height, z_0, wind):
         pos1 = turbine_pos + np.array([0, R])
         pos2 = turbine_pos - np.array([0, R])
 
-        plt.plot([pos1[0], pos2[0]], [pos1[1], pos2[1]], color='red')
+        plt.plot([pos1[0], pos2[0]], [pos1[1], pos2[1]], color='orange')
 
         dist = 12.2*R
         rl = alpha*dist + R
@@ -45,9 +46,7 @@ def get_turbine_circles(x, y, diameter):
         plt.fill(x_range, y_range, facecolor='lightsteelblue', edgecolor='royalblue', alpha=0.2)
 
 
-
 def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_array, wind_prob, algo):
-# def get_wake_plots(x, y, bounds, algo):
     """
     x, y: 1D arays are turbines coordinates
     wind: 1x2 array of x and y components of the wind.
@@ -56,17 +55,17 @@ def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_a
     fig = plt.figure()
     get_turbine_lines(x, y, diameter, height, z_0, [windspeed_array[0], 0])
     get_turbine_circles(x, y, diameter)
-    plt.scatter(x, y, color='black')
+    plt.scatter(x, y, color='white')
     b1 = bounds[0][0]
     b2 = bounds[0][1]
     b3 = bounds[1][0]
     b4 = bounds[1][1]
-    plt.plot([b1, b1, b2, b2, b1], [b3, b4, b4, b3, b3], color='black', linestyle="-", linewidth=0.5)
+    plt.plot([b1, b1, b2, b2, b1], [b3, b4, b4, b3, b3], color='white', linestyle="-", linewidth=0.5)
     b_range = 0.2*np.array([bounds[0, 1] - bounds[0, 0], bounds[1, 1] - bounds[1, 0]])
     plt.xlim(bounds[0, 0] - b_range[0], bounds[0, 1] + b_range[0])
     plt.ylim(bounds[1, 0] - b_range[1], bounds[1, 1] + b_range[1])
     plt.title(algo)
     plt.gca().set_aspect('equal')
-    plt.show()
+    plt.savefig('figure.png')
 
 
