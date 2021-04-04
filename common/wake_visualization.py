@@ -54,7 +54,7 @@ def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_a
     """
     # wind = [wind_velocity, 0]
     fig = plt.figure()
-    # get_turbine_lines(x, y, diameter, height, z_0, wind)
+    get_turbine_lines(x, y, diameter, height, z_0, [windspeed_array[0], 0])
     get_turbine_circles(x, y, diameter)
     plt.scatter(x, y, color='black')
     b1 = bounds[0][0]
