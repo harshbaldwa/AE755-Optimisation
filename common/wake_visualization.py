@@ -66,6 +66,6 @@ def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_a
     plt.ylim(bounds[1, 0] - b_range[1], bounds[1, 1] + b_range[1])
     plt.title(algo)
     plt.gca().set_aspect('equal')
-    plt.savefig('results/figure.png')
+    plt.savefig('results/{}.png'.format(algo))
 
 
