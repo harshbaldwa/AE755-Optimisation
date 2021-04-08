@@ -108,16 +108,16 @@ wind_prob = np.array([1])
 
 # optimizer variables
 n_pop = 150
-elit_num = 12
+elit_num = 20
 cross_frac = 0.8
 cross_num = int(cross_frac * (n_pop - elit_num))
 tour_size = 5
-mutat_gene = 2
+mutat_gene = 1
 mutat_num = n_pop - elit_num - cross_num
 old_pop = np.zeros((n_pop, n_var + 1))
 new_pop = np.zeros((n_pop, n_var + 1))
 
-generations = 600
+generations = 400
 
 
 # start algorithm
@@ -164,6 +164,16 @@ except KeyboardInterrupt:
     print("Getting the values from last population...\n")
 
 
+algo_data = [
+    "Genetic",
+    "n_pop: {}\nelit_num: {}\ncross: {}\nmutate_gene: {}\ngen: {}".format(
+        n_pop, elit_num, cross_frac, mutat_gene, generations
+    ),
+    "n_turb: {}\ndiameter: {}\nheight: {}\ncost_model: {}\nprofit: ${:.2f}M".format(
+        N, diameter, height, 'tejas', -new_pop[0, 0] / 1e6
+    ),
+    "genetic_{}".format(N),
+]
 print("Profit - ${:.2f}M".format(-new_pop[0, 0] / 1e6))
 get_wake_plots(
     new_pop[0, 1::2],
@@ -175,5 +185,5 @@ get_wake_plots(
     windspeed_array,
     theta_array,
     wind_prob,
-    "Genetic, Profit: ${:.2f}M".format(-new_pop[0, 0] / 1e6),
+    algo_data
 )

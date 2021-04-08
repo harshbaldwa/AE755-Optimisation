@@ -1,4 +1,6 @@
 import numpy as np
+import os
+import time
 import matplotlib.pyplot as plt
 plt.style.use('dark_background')
 
@@ -46,7 +48,7 @@ def get_turbine_circles(x, y, diameter):
         plt.fill(x_range, y_range, facecolor='lightsteelblue', edgecolor='royalblue', alpha=0.2)
 
 
-def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_array, wind_prob, algo):
+def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_array, wind_prob, algo_data):
     """
     x, y: 1D arays are turbines coordinates
     wind: 1x2 array of x and y components of the wind.
@@ -64,8 +66,14 @@ def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_a
     b_range = 0.2*np.array([bounds[0, 1] - bounds[0, 0], bounds[1, 1] - bounds[1, 0]])
     plt.xlim(bounds[0, 0] - b_range[0], bounds[0, 1] + b_range[0])
     plt.ylim(bounds[1, 0] - b_range[1], bounds[1, 1] + b_range[1])
-    plt.title(algo)
+    plt.title(algo_data[0])
+    plt.text(bounds[0][1], bounds[1, 1] + b_range[1] + 100, algo_data[1])
+    plt.text(bounds[0, 0] - b_range[0], bounds[1, 1] + b_range[1] + 100, algo_data[2])
     plt.gca().set_aspect('equal')
-    plt.savefig('results/{}.png'.format(algo))
+    if os.path.exists('./opti/results/{}.png'.format(algo_data[3])):
+        plt.savefig('./opti/results/{}_{}.png'.format(algo_data[3], int(time.time())))
+    else:
+        plt.savefig('./opti/results/{}.png'.format(algo_data[3]))
+    
 
 
