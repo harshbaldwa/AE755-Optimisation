@@ -1,11 +1,10 @@
 import math
 from .wake_model import aep
 
-def mosetti(x, x_bound=[0, 2000], y_bound=[0, 2000]):
-    n = len(x)/2
+def objective(layout, boundary_limits, diameter, height, z_0, windspeed_array, theta_array, wind_prob):
+    n = len(layout)/2
     cost = n*(2/3 + 1/3*math.exp(-0.00174*n**2))
-    alpha = 0.5/math.log(60/0.3)
-    P, penalty = aep(x, [12, 0], alpha, 40, [x_bound, y_bound])
+    alpha = 0.5/math.log(height/z_0)
+    P, penalty = aep(layout, windspeed_array, theta_array, wind_prob, alpha, diameter/2, boundary_limits)
 
-    # print(cost*365*24/P, 1e-6*penalty)
-    return cost*365*24/P + 1e-6*penalty
+    return (0.33*1/P + 0.66*cost/P) + 1e-6*penalty

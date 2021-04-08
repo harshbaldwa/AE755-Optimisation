@@ -30,11 +30,7 @@ def get_turbine_lines(x, y, diameter, height, z_0, wind):
 
         plt.fill(x_pos, y_pos, facecolor='lightsalmon', edgecolor='orangered', alpha=0.25)
 
-def get_turbine_circles(x, y, wind):
-    Z_H = 60  # Hub height of rotor in m
-    Z_0 = 0.3  # Hub height of rotor in m
-    alpha = 0.5 / (np.log(Z_H / Z_0))
-    diameter = 40
+def get_turbine_circles(x, y, diameter):
     R = 2.5 * diameter
 
     for i in range(len(x)):
@@ -71,20 +67,4 @@ def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_a
     plt.title(algo)
     plt.gca().set_aspect('equal')
     plt.savefig('results/{}.png'.format(algo))
-
-    get_turbine_lines(x, y, wind_dir)
-    get_turbine_circles(x, y, wind_dir)
-    plt.scatter(x, y, color='black')
-    # plt.xlim(0, 2000)
-    # plt.ylim(0, 2000)
-    plt.plot([0, 2000, 2000, 0, 0], [0, 0, 2000, 2000, 0])
-    plt.show()
-    # plt.plot(x_lines, y_lines)
-
-
-if __name__ == "__main__":
-    x = np.random.random(5) * 1000
-    y = np.random.random(5) * 1000
-
-    get_wake_plots(x, y, wind_dir=[12, 0])
 

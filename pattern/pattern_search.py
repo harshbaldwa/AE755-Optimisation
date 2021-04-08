@@ -96,7 +96,7 @@ def compare(X,Y,X_old,Y_old):
 
 
 ################### Pattern Search Inputs and loops starts here ################
-n = 20
+n = 25
 X_limit = 2000
 Y_limit = 2000
 step_size = 250
@@ -167,7 +167,7 @@ while(step_size>min_step_size):
     step_size /= 2
 
 # print(X, Y)
-# print(E)
+print(E)
 # plt.scatter(X, Y, label="Final")
 # plt.ylim(0, Y_limit)
 # plt.xlim(0, X_limit)
