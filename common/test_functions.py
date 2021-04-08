@@ -2,7 +2,7 @@
 import math
 import numpy as np
 from .wake_model import aep
-from .constraint_check import penalty_function
+# from .constraint_check import penalty_function
 
 def Bohachevsky(x, *args):
     x1 = x[0]
@@ -23,6 +23,14 @@ def himmel_partial(x, *args):
 
     r = (x1**2 + x2 -11)**2 + (x1 +x2**2 -7)**2 + 10*np.abs((x1-3)*(x2-2))
     return r
+
+def mosetti(x, *args):
+    n = len(x)/2
+    cost = n*(2/3 + 1/3*math.exp(-0.00174*n**2))
+    alpha = 0.5/math.log(60/0.3)
+    P, penalty = aep(x, [12, 0], alpha, 20, [[0, 2000], [0, 2000]])
+
+    return cost/P + 1e-5*penalty
 
 # if __name__=="__main__":
 #     print(Bohachevsky([3,3]))

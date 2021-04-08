@@ -1,108 +1,179 @@
-# not been tested yet!
-# importing is broken, need to fix that
-import random
+# cost functions
+from ..common import cost as cost
+from ..common.windrose import read_windrose
+
+# visualization
+from ..common.wake_visualization import get_wake_plots
+
+# other requirements
 import numpy as np
-from ..common import layout
-from ..common import cost
-from ..common import test_functions
-import matplotlib.pyplot as plt
+from progress.bar import IncrementalBar
 
-class Population:
-    # n_pop - number of layouts in a generation (assumed even)
-    # x_bound - x bound on the location of turbines
-    # y_bound - y bound on the location of turbines
-    # N - number of turbines
-    # crossover_frac - fraction of top layouts selected for crossover
-    # mutation_frac - fraction of total design variables getting mutated
-    def __init__(
-        self, n_pop, x_bound, y_bound, N, elitism_frac, crossover_frac, mutation_frac, grid_size
-    ):
-        self.n_pop = n_pop
-        self.x_bound = x_bound
-        self.y_bound = y_bound
-        self.pop_matrix = np.zeros((n_pop, 2 * N + 1))
-        self.N = N
-        self.elitism_pop = int(np.floor(elitism_frac * n_pop))
-        self.crossover_pop = int(np.floor(crossover_frac * n_pop))
-        self.mutation_num = int(np.floor(mutation_frac * n_pop))
-        self.grid_size = grid_size
 
-    # generate a random population, only for for first generation
-    def initialise_random(self):
-        for i in range(self.n_pop):
-            # Y = np.linspace(y_bound[0], y_bound[1], self.N)
-            # X = np.ones(self.N)*1000
-            # X = np.linspace(x_bound[0], x_bound[1], self.N)
-            # Y = np.ones(self.N)*1000
-            # self.pop_matrix[i, 1:] = layout.Layout(X, Y, self.N).layout
-            self.pop_matrix[i, 1:] = layout.random_layout(
-                self.N, self.x_bound, self.y_bound, self.grid_size
-            ).layout
-            
-    # evaluating costs of all layouts and sorting them accordingly
-    def fitness_pop(self):
-        for i in range(self.n_pop):
-            self.pop_matrix[i, 0] = cost.obj(self.pop_matrix[i, 1:], self.x_bound, self.y_bound)
-            # self.pop_matrix[i, 0] = test_functions.himmel_partial(self.pop_matrix[i, 1:], self.x_bound, self.y_bound)
+def init_random(pop, n_pop, bounds, N):
+    for i in range(n_pop):
+        pop[i, 1::2] = bounds[0, 0] + np.random.random(N) * (
+            bounds[0, 1] - bounds[0, 0]
+        )
+        pop[i, 2::2] = bounds[1, 0] + np.random.random(N) * (
+            bounds[1, 1] - bounds[1, 0]
+        )
 
-        self.pop_matrix = self.pop_matrix[np.argsort(self.pop_matrix[:, 0])]
 
-    def elitism(self, pop_matrix):
-        self.pop_matrix[:self.elitism_pop] = pop_matrix[:self.elitism_pop]
+def init_fitness(
+    pop, n_pop, bounds, diameter, height, z_0, windspeed_array, theta_array, wind_prob
+):
+    for i in range(n_pop):
+        pop[i, 0] = cost.objective(
+            pop[i, 1:],
+            bounds,
+            diameter,
+            height,
+            z_0,
+            windspeed_array,
+            theta_array,
+            wind_prob,
+        )
 
-    # doing a crossover for generating a new population
-    # this is a greedy crossover!!
-    def crossover_greedy(self, pop_matrix):
-        new_pop_matrix = np.zeros((self.n_pop - self.elitism_pop, 2*self.N+1))
-        beta = np.random.random((int(self.n_pop-self.elitism_pop/2), 2 * self.N))
-        parents = np.random.randint(0, self.crossover_pop, self.n_pop-self.elitism_pop)
-        for i in range(0, self.n_pop-self.elitism_pop, 2):
-            new_pop_matrix[i, 1:] = (
-                beta[int(i/2)] * (pop_matrix[parents[i], 1:] - pop_matrix[parents[i + 1], 1:])
-                - pop_matrix[parents[i], 1:]
+    return pop[np.argsort(pop[:, 0])]
+
+
+def fitness(
+    pop,
+    n_pop,
+    elit_num,
+    bounds,
+    diameter,
+    height,
+    z_0,
+    windspeed_array,
+    theta_array,
+    wind_prob,
+):
+    for i in range(elit_num, n_pop):
+        pop[i, 0] = cost.objective(
+            pop[i, 1:],
+            bounds,
+            diameter,
+            height,
+            z_0,
+            windspeed_array,
+            theta_array,
+            wind_prob,
+        )
+
+    return pop[np.argsort(pop[:, 0])]
+
+
+def elite(new_pop, old_pop, elit_num):
+    new_pop[:elit_num] = old_pop[:elit_num]
+
+
+def cross(new_pop, old_pop, n_pop, n_var, elit_num, cross_num, tour_size):
+    parents_idx = np.random.randint(0, n_pop, (cross_num, tour_size))
+    parents_idx.sort(axis=1)
+    beta = 0.5 - np.random.random((cross_num, n_var))
+
+    for i in range(0, cross_num):
+        parent1 = old_pop[parents_idx[i, 0], 1:]
+        parent2 = old_pop[parents_idx[i, 1], 1:]
+        new_pop[elit_num + i, 1:] = beta[i] * parent1 + (1 - beta[i]) * parent2
+
+
+def mutate(new_pop, old_pop, n_pop, mutat_num, n_var, mutat_gene, b_range):
+    parents_idx = np.random.randint(0, n_pop, mutat_num)
+    gene_idx = np.random.randint(1, n_var + 1, (mutat_num, mutat_gene))
+    gamma = 0.3 - 0.6 * np.random.random((mutat_num, mutat_gene))
+
+    for i in range(0, mutat_num):
+        new_pop[-(i + 1), 1:] = old_pop[parents_idx[i], 1:]
+        new_pop[-(i + 1), gene_idx[i]] += gamma[i] * b_range[gene_idx[i] % 2]
+
+
+# turbine data
+diameter = 82
+height = 80
+z_0 = 0.3
+
+# turbines and farm
+N = 33
+n_var = 2 * N
+bounds = np.array([[0, 4000], [0, 3500]])
+b_range = np.array([bounds[0, 1] - bounds[0, 0], bounds[1, 1] - bounds[1, 0]])
+# windspeed_array, theta_array, wind_prob = read_windrose()
+windspeed_array = np.array([12])
+theta_array = np.array([0])
+wind_prob = np.array([1])
+
+
+# optimizer variables
+n_pop = 150
+elit_num = 12
+cross_frac = 0.8
+cross_num = int(cross_frac * (n_pop - elit_num))
+tour_size = 5
+mutat_gene = 2
+mutat_num = n_pop - elit_num - cross_num
+old_pop = np.zeros((n_pop, n_var + 1))
+new_pop = np.zeros((n_pop, n_var + 1))
+
+generations = 600
+
+
+# start algorithm
+init_random(old_pop, n_pop, bounds, N)
+old_pop = init_fitness(
+    old_pop,
+    n_pop,
+    bounds,
+    diameter,
+    height,
+    z_0,
+    windspeed_array,
+    theta_array,
+    wind_prob,
+)
+
+try:
+    with IncrementalBar(
+        "Genetic",
+        max=generations,
+        suffix="%(percent).1f%% time_elapsed:[%(elapsed)ds] estimated_time:[%(eta)ds]",
+    ) as bar:
+        for gen in range(generations):
+            elite(new_pop, old_pop, elit_num)
+            cross(new_pop, old_pop, n_pop, n_var, elit_num, cross_num, tour_size)
+            mutate(new_pop, old_pop, n_pop, mutat_num, n_var, mutat_gene, b_range)
+            new_pop = fitness(
+                new_pop,
+                n_pop,
+                elit_num,
+                bounds,
+                diameter,
+                height,
+                z_0,
+                windspeed_array,
+                theta_array,
+                wind_prob,
             )
-            new_pop_matrix[i+1, 1:] = (
-                beta[int(i/2)] * (pop_matrix[parents[i + 1], 1:] - pop_matrix[parents[i], 1:])
-                - pop_matrix[parents[i + 1], 1:]
-            )
+            # print(gen, " - ", new_pop[0:3, 0])
+            bar.next()
+            old_pop = new_pop
 
-        self.pop_matrix[self.elitism_pop:] = new_pop_matrix
+except KeyboardInterrupt:
+    print("Getting the values from last population...\n")
 
-    # basic mutation (although no idea how effective)
-    def mutation(self):
-        reshaped_pop = np.reshape(self.pop_matrix[:, 1:], 2 * self.n_pop * self.N)
-        mutate_locations = np.random.randint(2*self.N*self.elitism_pop, 2 * self.N * self.n_pop, self.mutation_num)
-        for location in mutate_locations:
-            reshaped_pop[location] = (random.random()) * (
-                self.x_bound[1] - self.x_bound[0]
-            ) + self.x_bound[0]
-        
-        self.pop_matrix[:, 1:] = np.reshape(reshaped_pop, (self.n_pop, 2 * self.N))
 
-# just for testing!
-
-pop_size = 501
-x_bound = [0, 4000]
-y_bound = [0, 3500]
-n_turbines = 10
-elitism_rate = 0.01
-crossover_rate = 0.8
-mutation_rate = 0.1
-grid_size = 82*5
-
-oldPop = Population(pop_size, x_bound, y_bound, n_turbines, elitism_rate, crossover_rate, mutation_rate, grid_size)
-oldPop.initialise_random()
-# plt.plot(oldPop.pop_matrix[0, 1::2], oldPop.pop_matrix[0, 2::2], 'bo')
-oldPop.fitness_pop()
-
-for i in range(10):
-    newPop = Population(pop_size, x_bound, y_bound, n_turbines, elitism_rate, crossover_rate, mutation_rate, grid_size)
-    newPop.elitism(oldPop.pop_matrix)
-    newPop.crossover_greedy(oldPop.pop_matrix)
-    newPop.mutation()
-    newPop.fitness_pop()
-    print("{:0=3d} generation - best cost: {}".format(i+1, newPop.pop_matrix[0, 0]))
-    oldPop = newPop
-
-plt.plot(newPop.pop_matrix[0, 1::2], newPop.pop_matrix[0, 2::2], 'ro')
-plt.show()
+print("Profit - ${:.2f}M".format(-new_pop[0, 0] / 1e6))
+get_wake_plots(
+    new_pop[0, 1::2],
+    new_pop[0, 2::2],
+    bounds,
+    diameter,
+    height,
+    z_0,
+    windspeed_array,
+    theta_array,
+    wind_prob,
+    "Genetic, Profit: ${:.2f}M".format(-new_pop[0, 0] / 1e6),
+)
