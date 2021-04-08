@@ -41,11 +41,11 @@ def aep(layout, windspeed_array, theta_array, wind_prob, alpha, r, boundary_limi
 
     rr = r*np.sqrt(2)
     Ar = np.pi * r * r
-    
+
     x = layout[::2]
     y = layout[1::2]
     n = len(x)
-    
+
     dxf = np.vstack([x]*n)
     dyf = np.vstack([y]*n)
 
@@ -71,13 +71,13 @@ def aep(layout, windspeed_array, theta_array, wind_prob, alpha, r, boundary_limi
 
     # dimension -> n x len(theta)
     u_def_aoa = 1 - np.sqrt(np.sum(u_def_ao2, axis=0)) / Ar
-    
+
     # dimension -> n x len(theta) x len(wind)
     u_effective = np.tensordot(u_def_aoa, windspeed_array, 0)
-    
+
     # dimension -> len(theta) x len(wind) same as wind_prob
     u_effective_sum = np.sum(u_effective**3, 0)
-    
+
     power = 0.5*u_effective_sum * wind_prob * rho * Ar * Cp / 1000
     power_total = np.sum(power)
     penalty = penalty_function(x, y, dx_full, dy_full, 10*r, boundary_limits, rho=1)
@@ -107,9 +107,9 @@ def aep(layout, windspeed_array, theta_array, wind_prob, alpha, r, boundary_limi
     #     Ao = area_overlap(dx, dy, alpha, r)
     #     udef = 2 * a / ((1 + alpha * dx/rr) ** 2)
     #     udefAo2 = udefAo2 + (udef * Ao) ** 2
-    
+
     # penalty = penalty_function(x, y, dx_full, dy_full, 10*r, boundary_limits)
-    
+
     # udefAoA = np.sqrt(udefAo2) / Ar
     # u = u0 * (1 - udefAoA)
     # u3 = u ** 3
@@ -125,6 +125,7 @@ def penalty_function(x, y, dx_full, dy_full, min_dist, boundary_limits, rho=1):
     cond1 = dist < min_dist
 
     beta1 = np.sum(min_dist - dist[cond1])/2
+    # print("distance penalty", beta1)
 
     xlimits = boundary_limits[0]
     ylimits = boundary_limits[1]

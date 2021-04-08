@@ -76,4 +76,3 @@ def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_a
         plt.savefig('./opti/results/{}.png'.format(algo_data[3]))
     
 
-
