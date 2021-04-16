@@ -48,6 +48,25 @@ def get_turbine_circles(x, y, diameter):
         plt.fill(x_range, y_range, facecolor='lightsteelblue', edgecolor='royalblue', alpha=0.2)
 
 
+def get_wake_plots_interactive(x, y, bounds, diameter, height, z_0, windspeed_array, theta_array, wind_prob, algo_data):
+    """
+    x, y: 1D arays are turbines coordinates
+    wind: 1x2 array of x and y components of the wind.
+    """
+    get_turbine_lines(x, y, diameter, height, z_0, [windspeed_array[0], 0])
+    get_turbine_circles(x, y, diameter)
+    plt.scatter(x, y, color='gray')
+    b1 = bounds[0][0]
+    b2 = bounds[0][1]
+    b3 = bounds[1][0]
+    b4 = bounds[1][1]
+    plt.plot([b1, b1, b2, b2, b1], [b3, b4, b4, b3, b3], color='white', linestyle="-", linewidth=0.5)
+    b_range = 0.2*np.array([bounds[0, 1] - bounds[0, 0], bounds[1, 1] - bounds[1, 0]])
+    plt.xlim(bounds[0, 0] - b_range[0], bounds[0, 1] + b_range[0])
+    plt.ylim(bounds[1, 0] - b_range[1], bounds[1, 1] + b_range[1])
+    plt.draw()
+
+
 def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_array, wind_prob, algo_data):
     """
     x, y: 1D arays are turbines coordinates
@@ -74,6 +93,4 @@ def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_a
     if os.path.exists('./code/results/{}.png'.format(algo_data[3])):
         plt.savefig('./code/results/{}_{}.png'.format(algo_data[3], int(time.time())))
     else:
-        plt.savefig('./code/results/{}.png'.format(algo_data[3]))
-
-
+        plt.savefig('./opti/results/{}.png'.format(algo_data[3]))
