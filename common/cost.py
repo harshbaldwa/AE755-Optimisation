@@ -17,7 +17,7 @@ def objective(layout, boundary_limits, diameter, height, z_0, windspeed_array, t
     # L_trans = 10000 # Length of transmission cable - running from farm to distribution center - in m [10e3]
     # V_M = 10000 # Voltage rating of Medium Voltage AC (MVAC) lines used for collection [10e3]
     # V_H = 100000 # Voltage rating of High Voltage AC (HVAC) lines used for transmission [100e3]
-    
+
     L_coll = 0
     for i in range(N):
         L_coll += np.sqrt(
@@ -67,7 +67,8 @@ def objective(layout, boundary_limits, diameter, height, z_0, windspeed_array, t
     area = (y_max - y_min)*(x_max - x_min)
     land_cost = area*40878
 
-    obj = 1191241.17052 + 15.28918*L_coll + 521.550195949*N + 19.210518346*(N**0.751) - 0.02*AEP
+    # obj = 1191241.17052 + 15.28918*L_coll + 521.550195949*N + 19.210518346*(N**0.751) - 0.02*AEP
+    obj = 1191241.17052 + 521.550195949*N + 19.210518346*(N**0.751) - 0.02*AEP
     # obj += 1e-2*land_cost + 1e4*penalty
     obj += 1e4*penalty
 

@@ -70,9 +70,10 @@ def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_a
     plt.text(bounds[0][1], bounds[1, 1] + b_range[1] + 100, algo_data[1])
     plt.text(bounds[0, 0] - b_range[0], bounds[1, 1] + b_range[1] + 100, algo_data[2])
     plt.gca().set_aspect('equal')
-    if os.path.exists('./opti/results/{}.png'.format(algo_data[3])):
-        plt.savefig('./opti/results/{}_{}.png'.format(algo_data[3], int(time.time())))
+    # plt.show()
+    if os.path.exists('./code/results/{}.png'.format(algo_data[3])):
+        plt.savefig('./code/results/{}_{}.png'.format(algo_data[3], int(time.time())))
     else:
-        plt.savefig('./opti/results/{}.png'.format(algo_data[3]))
-    
+        plt.savefig('./code/results/{}.png'.format(algo_data[3]))
+
 

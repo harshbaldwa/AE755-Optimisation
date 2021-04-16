@@ -1,13 +1,14 @@
 import numpy as np
 from ..common.wake_model import aep
-from ..common.cost import obj
+from ..common.cost import objective as obj
+# from ..common.mosetti_cost import objective as obj
 
 
-def relocate_turbines(x, y, boundary_limits=[[0.0, 1.0], [0.0, 1.0]], n_weak_turbines=5, n_reloc_attempts=15, diameter=82):
+
+def relocate_turbines(x, y, n_weak_turbines, n_reloc_attempts, boundary_limits,
+                      diameter, Z_H, Z_0, windspeed_array, theta_array, wind_prob):
+
     power_produced = np.zeros_like(x)
-
-    Z_H = 60  # Hub height of rotor in m
-    Z_0 = 0.3  # Hub height of rotor in m
     alpha = 0.5 / (np.log(Z_H / Z_0))
 
     positions = np.zeros(2*len(x))
@@ -16,8 +17,9 @@ def relocate_turbines(x, y, boundary_limits=[[0.0, 1.0], [0.0, 1.0]], n_weak_tur
 
     for i in range(len(x)):
         position = np.array([x[i], y[i]])
-        power_produced[i], penalty = aep(position, [12, 0], alpha=alpha, rr=0.5*diameter, boundary_limits=boundary_limits)
-
+        power_produced[i], penalty = aep(position, windspeed_array,
+                                         theta_array, wind_prob, alpha,
+                                         0.5*diameter, boundary_limits)
 
     # power_produced = get_power(x, y) # get power produced by the turbines
 
@@ -32,7 +34,8 @@ def relocate_turbines(x, y, boundary_limits=[[0.0, 1.0], [0.0, 1.0]], n_weak_tur
         idx = np.argmin(power_produced) #identify the weakest turbine
 
         # E = 0 # objective function call
-        E = obj(positions)
+        E = obj(positions, boundary_limits, diameter, Z_H,
+                Z_0, windspeed_array, theta_array, wind_prob)
 
         x_pos = x.copy()
         y_pos = y.copy()
@@ -50,19 +53,17 @@ def relocate_turbines(x, y, boundary_limits=[[0.0, 1.0], [0.0, 1.0]], n_weak_tur
             pos_new[::2] = x_pos
             pos_new[1::2] = y_pos
 
-            E_relocated = obj(pos_new)
+            E_relocated = obj(pos_new, boundary_limits, diameter,
+                              Z_H, Z_0, windspeed_array, theta_array, wind_prob)
 
             if E_relocated < E:
                 x = x_pos
                 y = y_pos
                 break;
 
-            # else:
-            #     x_pos = x.copy()
-            #     y_pos = y.copy()
-
         for i in range(len(x)): # get power produced by the turbines
-            power_produced[i], penalty = aep(np.array([x[i], y[i]]), [12, 0], alpha=alpha, rr=0.5*diameter)
+            power_produced[i], penalty = aep(position, windspeed_array, theta_array,
+                                             wind_prob, alpha, 0.5*diameter, boundary_limits)
 
     return x, y
 
