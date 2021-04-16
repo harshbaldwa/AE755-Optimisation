@@ -3,4 +3,5 @@ pysph/
 env/
 .vscode/
 common/windrose.py
+common/wake_visualization.py
 results/.DS_Store
