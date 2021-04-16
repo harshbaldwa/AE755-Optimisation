@@ -197,7 +197,7 @@ algo_data = [
         n_pop, n_relocate
     ),
     "n_turb: {}\ndiameter: {}\nheight: {}\ncost_model: {}\nprofit: ${:.2f}M".format(
-        n, diameter, Z_H, 'tejas', E / 1e6
+        n, diameter, Z_H, 'tejas', -1*E / 1e6
     ),
     "pattern_{}".format(n),
 ]

@@ -23,3 +23,10 @@ def himmel_partial(x, *args):
 
     r = (x1**2 + x2 -11)**2 + (x1 +x2**2 -7)**2 + 10*np.abs((x1-3)*(x2-2))
     return r
+
+def rosenbrock(x, *args):
+    x1 = x[0]
+    x2 = x[1]
+
+    r = (1 - x1)**2 + 100 * (x2 - x1**2)**2
+    return r
