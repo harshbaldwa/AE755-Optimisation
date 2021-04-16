@@ -21,7 +21,7 @@ def get_turbine_lines(x, y, diameter, height, z_0, wind):
 
         plt.plot([pos1[0], pos2[0]], [pos1[1], pos2[1]], color='orange')
 
-        dist = 100*R
+        dist = 12.2*R
         rl = alpha*dist + R
 
         pos4 = turbine_pos + np.array([dist, rl])
@@ -33,7 +33,7 @@ def get_turbine_lines(x, y, diameter, height, z_0, wind):
         plt.fill(x_pos, y_pos, facecolor='lightsalmon', edgecolor='orangered', alpha=0.25)
 
 def get_turbine_circles(x, y, diameter):
-    R = 5 * diameter
+    R = 2.5 * diameter
 
     for i in range(len(x)):
 
