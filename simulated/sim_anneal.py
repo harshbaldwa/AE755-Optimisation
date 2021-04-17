@@ -48,6 +48,7 @@ def perturb_state(x, per_max, k):
 
 def perturb_state_2(x, per_max, k):
     per = per_max * (2 * np.random.random(len(x)) - 1)
+
     x = x + per
     return x
 
@@ -87,25 +88,23 @@ def annealing(
 
     n = len(x0)
 
+    k_len = n//5 + 1
     while T > Tmin:
+        accepted = 0
+        # per_max = per_max * ( 1.0 -0.9*(Tmax-T)/(Tmax-Tmin) )
         for i in range(Markov_no):
-            for k in range(10):
-                xi = perturb_state_2(x, per_max * (0.2 * T / Tmin), k)
-                cost_i = fn_obj(
-                    xi,
-                    bounds,
-                    diameter,
-                    height,
-                    z_0,
-                    windspeed_array,
-                    theta_array,
-                    wind_prob,
-                )
+
+            # print("diff" , ( 1-0.9*(Tmax-T)/(Tmax-Tmin) ), per_max)
+            for k in range(k_len):
+                xi = perturb_state_2(x, per_max , k) # * (0.2 * T / Tmin)
+                cost_i = fn_obj(xi, bounds, diameter, height, z_0, windspeed_array, theta_array, wind_prob)
                 dcost = cost_i - cost
 
+                # print("dcost", dcost)
                 if dcost < 0:
                     x = xi.copy()
                     cost = cost_i
+                    accepted += 1
                     # print("in 1")
 
                     if cost < cost_best:
@@ -113,10 +112,26 @@ def annealing(
                         x_best = x.copy()
                         print("Current Best", cost_best)
 
-                elif np.exp(-dcost / T) > np.random.random():
-                    x = xi.copy()
-                    # print("in 2")
-
+                # elif np.exp(-dcost / T) > np.random.random():
+                else:
+                    met = np.exp(-dcost / T)
+                    rand = np.random.random()
+                    # print("dcost", dcost)
+                    # print("met {}\t rand {}".format(met, rand))
+                    if met > rand:
+                        accepted += 1
+                        x = xi.copy()
+                        # print("in 2")
+        accepted_per = accepted*100/(Markov_no*k_len)
+        print("Accepted\t{:.3f}%\t pert_max ={:.3f}".format(accepted_per, per_max * ( 1.0 -0.9999*(Tmax-T)/(Tmax-Tmin) )))
+        if accepted_per > 55 or accepted_per<45:
+            per_max = per_max *( 1 + (accepted_per-50)/100**(-0.5))
+            if per_max>xbound[1]:
+                per_max = xbound[1]
+                print(xbound[1], "xbound")
+            elif per_max<100:
+                per_max = 100
+            print("Current per_max={}".format(per_max))
         T = alpha * T
     return (x_best, cost_best)
 
@@ -146,7 +161,7 @@ if __name__ == "__main__":
     z_0 = 0.3
     n = 33
 
-    grid = 50
+    grid = 100
 
     # windspeed_array, theta_array, wind_prob = read_windrose()
     windspeed_array = np.array([12])
@@ -168,13 +183,19 @@ if __name__ == "__main__":
     )
 
     # sim anneal related parameters
-    alpha = 0.89
+    alpha = 0.82
     pert_max = 150
     Markov_no = 200
-    Tmax = 10 * np.abs(cost_in)
-    Tmin = np.abs(cost_in) * 10e-10
+    Tmax = 1000000 * np.abs(cost_in)
+    Tmin = n*100 #np.abs(cost_in) * 10e-7
 
-    sys.stdout = open("Sim_run_Tejas33", "w")
+    # x2 = perturb_state_2(layout, pert_max, 1)
+    # c2 = objective(x2, bounds, diameter, height, z_0, windspeed_array, theta_array, wind_prob)
+
+    # print(c2)
+    # print(x2)
+
+    # sys.stdout = open("Sim_run_Tejas33", "w")
     write_run_info(
         layout,
         n,
@@ -213,8 +234,18 @@ if __name__ == "__main__":
     time_required = b - a
     print("final cost =   \t" + str(cb))
     print("time required", time_required)
-    sys.stdout.close()
+    # sys.stdout.close()
 
+    algo_data = [
+        "Sim_anneal",
+        "Markov: {}\nTmax: {}\nTmin: {}".format(
+            Markov_no, Tmax, Tmin
+        ),
+        "n_turb: {}\ndiameter: {}\nheight: {}\ncost_model: {}\nprofit: ${:.3f}M\ntime: {:.3f}s".format(
+            n, diameter, height, 'tejas', -cb / 1e6, b-a
+        ),
+        "siman{}".format(n),
+    ]
     get_wake_plots(
         xf[::2],
         xf[1::2],
@@ -225,9 +256,5 @@ if __name__ == "__main__":
         windspeed_array,
         theta_array,
         wind_prob,
-        "Sim_anneal " + str(cb),
+        algo_data
     )
-    # plt.plot(xf[::2], xf[1::2], "ro")
-    # plt.title(str(cb)+"\t "+str(cost_in))
-    # plt.savefig("sim_an.png")
-    # plt.show()
