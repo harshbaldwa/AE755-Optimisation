@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 
 def write_run_info(
@@ -17,6 +18,7 @@ def write_run_info(
     windspeed_array,
     theta_array,
     wind_prob,
+    Ns,
 ):
     print("#" * 80)
     print("Run parameters")
@@ -36,6 +38,7 @@ def write_run_info(
     print("Tmin", Tmin)
     print("alpha", alpha)
     print("Markov no", Markov_no)
+    print("Ns", Ns)
     print("per max", per_max)
     print("#" * 80)
 
@@ -55,80 +58,103 @@ def annealing(
     windspeed_array,
     theta_array,
     wind_prob,
+    Ns,
+    restart=False,
 ):
-    x_best = x0.copy()
-    x = x0.copy()
-    T = Tmax
+    if not restart:
+        x_best = x0.copy()
+        x = x0.copy()
+        T = Tmax
 
-    cost = fn_obj(
-        x0,
-        bounds,
-        diameter,
-        height,
-        z_0,
-        windspeed_array,
-        theta_array,
-        wind_prob,
-    )
-    cost_best = cost
+        cost = fn_obj(
+            x0,
+            bounds,
+            diameter,
+            height,
+            z_0,
+            windspeed_array,
+            theta_array,
+            wind_prob,
+        )
+        cost_best = cost
+    else:
+        print("#"*80, "\n\nRESTARTING SOLUTION\n\n")
+        T, x, cost, x_best, cost_best = np.load("restart.npy", allow_pickle = True)
+        print("from T= {}\ncost = {}\ncost_best = {}".format(T, cost, cost_best))
+        print("#"*80)
+        print("#"*80)
+
     xi = np.zeros_like(x0)
 
     n = len(x0)
     pert = per_max*np.ones(n)
     one_hot = np.eye(n)
     accept = np.zeros(n)
-    n_iter = -np.log(Tmax/Tmin)//np.log(alpha)
+    n_iter = int(-np.log(T/Tmin)//np.log(alpha)) +1
     iter_no = 1
 
-    while T > Tmin:
-        for lm in range(4):
-            for i in range(Markov_no):
-                for k in range(n):
-                    xi = x + one_hot[k]*pert*(2*np.random.random()-1)
-                    cost_i = fn_obj(xi, bounds, diameter, height, z_0, windspeed_array, theta_array, wind_prob)
-                    dcost = cost_i - cost
+    print(n_iter)
 
-                    if dcost < 0:
-                        x = xi.copy()
-                        cost = cost_i
-                        accept[k] += 1
-                        # print("in 1")
+    # with IncrementalBar("Sim_Anneal", max=n_iter, suffix="%(percent).1f%% time_elapsed:[%(elapsed)ds] estimated_time:[%(eta)ds]") as bar:
+    try:
+        for _ in tqdm(range(n_iter)):
+            for lm in range(Ns):
+                for i in range(Markov_no):
+                    rand_nos = 2*pert*(2*np.random.random(n) -1 )
+                    for k in range(n):
+                        xi = x + one_hot[k]* rand_nos
+                        cost_i = fn_obj(xi, bounds, diameter, height, z_0, windspeed_array, theta_array, wind_prob)
+                        dcost = cost_i - cost
 
-                        if cost < cost_best:
-                            cost_best = cost
-                            x_best = x.copy()
-                            print("Current Best", cost_best)
+                        if dcost < 0:
+                            x = xi.copy()
+                            cost = cost_i
+                            accept[k] += 1
+                            # print("in 1")
 
-                    elif np.exp(-dcost / T) > np.random.random():
-                        accept[k] += 1
-                        x = xi.copy()
-                        cost = cost_i
-                #end for k
-            #end for i (Markov No)
+                            if cost < cost_best:
+                                cost_best = cost
+                                x_best = x.copy()
+                                print("Current Best", - cost_best/1e6, flush = True)
+                        elif np.exp(-dcost / T) > np.random.random():
+                            accept[k] += 1
+                            x = xi.copy()
+                            cost = cost_i
+                    #end for k
+                #end for i (Markov No)
 
-            accepted_per = accept/(Markov_no)
-            mh = accepted_per > 0.6
-            ml = accepted_per <0.4
-            mm = 1 - (mh+ml)
-            pert = pert * ((1 + 2*(accepted_per-0.6)/0.4)*mh 
-                + ml/(1 + 2*(0.4-accepted_per)/0.4) + mm)
-            print(accepted_per*100)
-            accept.fill(0)
+                accepted_per = accept/(Markov_no)
+                mh = accepted_per > 0.6
+                ml = accepted_per <0.4
+                mm = 1 - (mh+ml)
+                pert = pert * ((1 + 2*(accepted_per-0.6)/0.4)*mh 
+                    + ml/(1 + 2*(0.4-accepted_per)/0.4) + mm)
+                print(accepted_per*100)
+                accept.fill(0)
+                # print(pert)
 
-            # print(pert)
-        #end for lm 
-        iter_no +=1
-        T = alpha * T
-    return (x_best, cost_best)
+            #end for lm 
+            iter_no +=1
+            T = alpha * T
+        #end for _ tqdm()
+        print("T = ", T)
+        return (x_best, cost_best)
+    except KeyboardInterrupt:
+        print("\n Oops....\n\tsaving current state")
+        restart = np.array([T, x, cost, x_best, cost_best], dtype=object)
+        np.save( "restart.npy", restart)
+        print("created Restert file")
+        return (x_best, cost_best)
+
 
 
 if __name__ == "__main__":
 
     # from ..common.test_functions import Bohachevsky, himmel
     from ..common.layout import Layout, random_layout
-    # from ..common.cost import objective
+    from ..common.cost import objective
 
-    from ..common.mosetti_cost import objective
+    # from ..common.mosetti_cost import objective
     from ..common.windrose import read_windrose
     from ..common.wake_visualization import get_wake_plots
     import sys
@@ -136,24 +162,25 @@ if __name__ == "__main__":
 
     plt.style.use("dark_background")
 
-    # diameter = 82
-    # height = 80
-    # z_0 = 0.3
-    # xmax = 4000
-    # ymax = 3500
-
-    diameter = 40
-    height = 60
+    diameter = 82
+    height = 80
     z_0 = 0.3
-    xmax = 2000
-    ymax = 2000
+    xmax = 4000
+    ymax = 3500
 
+    # diameter = 40
+    # height = 60
+    # z_0 = 0.3
+    # xmax = 2000
+    # ymax = 2000
+
+    n = 10
     xbound = [0, xmax]
     ybound = [0, ymax]
     bounds = np.array([xbound, ybound])
 
-    n = 26
 
+    filename = "siman_tejas_{}_{}".format(n, int(time.time()))
     grid = 20
 
     # windspeed_array, theta_array, wind_prob = read_windrose()
@@ -176,19 +203,15 @@ if __name__ == "__main__":
     )
 
     # sim anneal related parameters
-    alpha = 0.91
-    pert_max = 500
-    Markov_no = 100
-    Tmax = 10 * np.abs(cost_in)
+    alpha = 0.87
+    pert_max = 1500
+    Markov_no = 40
+    Ns = 20
+    Tmax = 1000 * np.abs(cost_in)
     Tmin = np.abs(cost_in) * 10e-10
 
-    # x2 = perturb_state_2(layout, pert_max, 1)
-    # c2 = objective(x2, bounds, diameter, height, z_0, windspeed_array, theta_array, wind_prob)
 
-    # print(c2)
-    # print(x2)
-
-    # sys.stdout = open("Sim_run_Tejas33", "w")
+    sys.stdout = open("./opti/results/"+filename+".txt", "w")
     write_run_info(
         layout,
         n,
@@ -204,6 +227,7 @@ if __name__ == "__main__":
         windspeed_array,
         theta_array,
         wind_prob,
+        Ns,
     )
     print("initial_cost = \t" + str(cost_in))
     #### Start Annealing #####
@@ -223,22 +247,26 @@ if __name__ == "__main__":
         windspeed_array,
         theta_array,
         wind_prob,
+        Ns,
+        False,
     )
+    
+
     b = time.time()
     time_required = b - a
     print("final cost =   \t" + str(cb))
     print("time required", time_required)
-    # sys.stdout.close()
+    sys.stdout.close()
 
     algo_data = [
         "Sim_anneal",
-        "cost_model: {}\nMarkov: {}\nTmax: {}\nTmin: {}".format(
-            "Mosseti",Markov_no, Tmax, Tmin
+        "cost_model: {}\nMarkov: {}\nNS: {}\nTmax: {}\nTmin: {}".format(
+            "Tejas",Markov_no, Ns, Tmax, Tmin
         ),
-        "n_turb: {}\ndiameter: {}\nheight:{}\nprofit: {}\ntime: {:.3f}s".format(
-            n, diameter, height, cb , b-a
+        "n_turb: {}\ndiameter: {}\nheight:{}\nprofit: {:.1f}\ntime: {:.3f}s".format(
+            n, diameter, height, -cb , b-a
         ),
-        "siman{}".format(n),
+        filename,
     ]
     get_wake_plots(
         xf[::2],
