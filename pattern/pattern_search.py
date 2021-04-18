@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 import math
 import random
 from numpy.random import rand
-from ..common.cost import objective as obj
-# from ..common.mosetti_cost import objective as obj
+# from ..common.cost import objective as obj
+from ..common.mosetti_cost import objective as obj
 from ..common.wake_visualization import get_wake_plots
 from .popping import relocate_turbines
 from ..common.layout import Layout
@@ -102,27 +102,27 @@ def compare(X,Y,X_old,Y_old):
 
 
 ################### Pattern Search Inputs and loops starts here ################
-n = 10
+n = 4
 
 # Setup - Mossetti
-# X_limit = 2000
-# Y_limit = 2000
-# boundary_limits = np.array([[0, X_limit], [0, Y_limit]])
-# step_size = 256
-# min_step_size = 64
-# diameter = 40
-# Z_H = 60
-# Z_0 = 0.3
+X_limit = 2000
+Y_limit = 2000
+boundary_limits = np.array([[0, X_limit], [0, Y_limit]])
+step_size = 256
+min_step_size = 64
+diameter = 40
+Z_H = 60
+Z_0 = 0.3
 
 # Setup - Nani Sindhodi
-X_limit = 4000
-Y_limit = 3500
-boundary_limits = np.array([[0, X_limit], [0, Y_limit]])
-step_size = 1024
-min_step_size = 1.0
-diameter = 82
-Z_H = 80
-Z_0 = 0.3
+# X_limit = 4000
+# Y_limit = 3500
+# boundary_limits = np.array([[0, X_limit], [0, Y_limit]])
+# step_size = 1024
+# min_step_size = 1.0
+# diameter = 82
+# Z_H = 80
+# Z_0 = 0.3
 
 alpha = 0.5 / (np.log(Z_H / Z_0))
 
@@ -133,7 +133,7 @@ alpha = 0.5 / (np.log(Z_H / Z_0))
 
 # windspeed_array, theta_array, wind_prob = read_windrose()
 
-N = 16.0
+N = 4.0
 theta_array = np.linspace(0, 2*np.pi, int(N))
 windspeed_array = np.array([0, 12])
 wind_prob = np.zeros((int(N), 2))
@@ -234,7 +234,7 @@ get_wake_plots(
     theta_array,
     wind_prob,
     algo_data,
-    np.pi/3
+    np.pi/2
 )
 
 print(E)
