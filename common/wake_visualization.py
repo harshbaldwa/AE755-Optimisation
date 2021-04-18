@@ -28,6 +28,9 @@ def get_turbine_lines(x, y, diameter, height, z_0, wind, theta_dom=0):
         pos4 = turbine_pos + np.array([dist, rl])
         pos3 = turbine_pos - np.array([0, rl]) + np.array([dist, 0])
 
+        pos1 = turbine_pos + np.array([0, R])
+        pos2 = turbine_pos - np.array([0, R])
+
         x_pos = np.array([pos1[0], pos2[0], pos3[0], pos4[0]]) - turbine_pos[0]
         y_pos = np.array([pos1[1], pos2[1], pos3[1], pos4[1]]) - turbine_pos[1]
 
