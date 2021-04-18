@@ -65,12 +65,12 @@ def objective(layout, boundary_limits, diameter, height, z_0, windspeed_array, t
 
     ### STOP MULTILINE COMMENT
 
-    x_min = np.min(layout[::2])
-    x_max = np.max(layout[::2])
-    y_min = np.min(layout[1::2])
-    y_max = np.max(layout[1::2])
-    area = (y_max - y_min)*(x_max - x_min)
-    land_cost = area*40878
+    # x_min = np.min(layout[::2])
+    # x_max = np.max(layout[::2])
+    # y_min = np.min(layout[1::2])
+    # y_max = np.max(layout[1::2])
+    # area = (y_max - y_min)*(x_max - x_min)
+    # land_cost = area*40878
 
     # obj = 1191241.17052 + 521.550195949*N + 19.210518346*(N**0.751) - 0.02*AEP
     obj = 1191241.17052 + 15.28918*L_coll + 521.550195949*N + 19.210518346*(N**0.751) - 0.02*AEP
