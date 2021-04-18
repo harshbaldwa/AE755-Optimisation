@@ -4,7 +4,8 @@ import time
 import matplotlib.pyplot as plt
 plt.style.use('dark_background')
 
-def get_turbine_lines(x, y, diameter, height, z_0, wind):
+def get_turbine_lines(x, y, diameter, height, z_0, wind, theta_dom=0):
+    print(theta_dom)
     normal = np.array([-wind[1]/(wind[0]+np.finfo(float).eps), 1])
     normal = normal/np.linalg.norm(normal)
     R = np.sqrt(2)*diameter/2
@@ -16,8 +17,8 @@ def get_turbine_lines(x, y, diameter, height, z_0, wind):
     for i in range(len(x)):
         turbine_pos = np.array([x[i], y[i]])
 
-        pos1 = turbine_pos + np.array([0, R])
-        pos2 = turbine_pos - np.array([0, R])
+        pos1 = turbine_pos + np.array([R*np.sin(theta_dom), R*np.cos(theta_dom)])
+        pos2 = turbine_pos - np.array([R*np.sin(theta_dom), R*np.cos(theta_dom)])
 
         plt.plot([pos1[0], pos2[0]], [pos1[1], pos2[1]], color='orange')
 
@@ -27,10 +28,16 @@ def get_turbine_lines(x, y, diameter, height, z_0, wind):
         pos4 = turbine_pos + np.array([dist, rl])
         pos3 = turbine_pos - np.array([0, rl]) + np.array([dist, 0])
 
-        x_pos = [pos1[0], pos2[0], pos3[0], pos4[0]]
-        y_pos = [pos1[1], pos2[1], pos3[1], pos4[1]]
+        x_pos = np.array([pos1[0], pos2[0], pos3[0], pos4[0]]) - turbine_pos[0]
+        y_pos = np.array([pos1[1], pos2[1], pos3[1], pos4[1]]) - turbine_pos[1]
 
-        plt.fill(x_pos, y_pos, facecolor='lightsalmon', edgecolor='orangered', alpha=0.25)
+        xp = x_pos*np.cos(theta_dom) + y_pos*np.sin(theta_dom)
+        yp = -x_pos*np.sin(theta_dom) + y_pos*np.cos(theta_dom)
+
+        xp = xp + turbine_pos[0]
+        yp = yp + turbine_pos[1]
+
+        plt.fill(xp, yp, facecolor='lightsalmon', edgecolor='orangered', alpha=0.25)
 
 def get_turbine_circles(x, y, diameter):
     R = 2.5 * diameter
@@ -67,14 +74,14 @@ def get_wake_plots_interactive(x, y, bounds, diameter, height, z_0, windspeed_ar
     plt.draw()
 
 
-def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_array, wind_prob, algo_data):
+def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_array, wind_prob, algo_data, theta_dom=0):
     """
     x, y: 1D arays are turbines coordinates
     wind: 1x2 array of x and y components of the wind.
     """
     # wind = [wind_velocity, 0]
     fig = plt.figure(figsize=(12, 12))
-    get_turbine_lines(x, y, diameter, height, z_0, [windspeed_array[0], 0])
+    get_turbine_lines(x, y, diameter, height, z_0, [windspeed_array[0], 0], theta_dom)
     get_turbine_circles(x, y, diameter)
     plt.scatter(x, y, color='gray')
     b1 = bounds[0][0]
@@ -89,8 +96,8 @@ def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_a
     plt.text(bounds[0][1], bounds[1, 1] + b_range[1] + 100, algo_data[1])
     plt.text(bounds[0, 0] - b_range[0], bounds[1, 1] + b_range[1] + 100, algo_data[2])
     plt.gca().set_aspect('equal')
-    # plt.show()
-    if os.path.exists('./code/results/{}.png'.format(algo_data[3])):
-        plt.savefig('./code/results/{}_{}.png'.format(algo_data[3], int(time.time())))
+    if os.path.exists('./code/pattern_results/{}.png'.format(algo_data[3])):
+        plt.savefig('./code/pattern_results/{}_{}.png'.format(algo_data[3], int(time.time())))
     else:
-        plt.savefig('./opti/results/{}.png'.format(algo_data[3]))
+        plt.savefig('./code/pattern_results/{}.png'.format(algo_data[3]))
+    plt.show()

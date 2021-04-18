@@ -1,18 +1,10 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 import numpy as np
 import matplotlib.pyplot as plt
 import math
 import random
 from numpy.random import rand
 # from ..common.cost import objective as obj
-# from ..common.test_functions import ackley as obj
-from ..common.test_functions import eggholder as obj
-
+from ..common.test_functions import ackley as obj
 # from ..common.mosetti_cost import objective as obj
 from ..common.wake_visualization import get_wake_plots
 from .popping import relocate_turbines
@@ -42,7 +34,7 @@ def get_pos(X, Y):
 
 def give_direction(X,Y,step_size, E):
 
-    X1 = X
+    X1 = X.copy()
     Y1 = Y
     new = X1 + step_size
     X1 = new
@@ -90,9 +82,7 @@ def compare(X,Y,X_old,Y_old):
     truth1 = X == X_old
     truth2 = Y == Y_old
 
-    # print(truth1, truth2)
-
-    if (truth1) or (truth2):
+    if (False in truth1) or (False in truth2):
         return 1
     else:
         return 0
@@ -100,19 +90,21 @@ def compare(X,Y,X_old,Y_old):
 
 
 ################### Pattern Search Inputs and loops starts here ################
-n = 1
+n = 5
 
-step_size = 500
-min_step_size = 0.001
+step_size = 10
+min_step_size = 0.00001
 
 ####### for lool for checking constrint till satisfection ######
-X = np.random.random()*500 - 250
-Y = np.random.random()*500 - 250
+X = np.random.random(n)*100 - 50
+Y = np.random.random(n)*100 - 50
 
-E = obj([X, Y])
+pos = get_pos(X, Y)
 
-X_old = X
-Y_old = Y
+E = obj(pos)
+
+X_old = X.copy()
+Y_old = Y.copy()
 
 ################ Generate random selection order ##############
 order = random_selection_order(n)
@@ -122,16 +114,17 @@ while(step_size>min_step_size):
     k = 0.0
     while(True):
         k += 1
-        X_old = X
-        Y_old = Y
+        X_old = X.copy()
+        Y_old = Y.copy()
         X, Y = give_direction(X,Y,step_size, E)
 
-        E = obj([X, Y])
+        pos = get_pos(X, Y)
+        E = obj(pos)
 
-        if X == X_old and Y == Y_old:
+        if compare(X, Y, X_old, Y_old):
             break;
 
     step_size /= 2
 
 # print(365*24*aep(positions, windspeed_array, theta_array, wind_prob, alpha, 0.5*diameter, boundary_limits)[0])
-print(X, Y, E)
+print(X, Y)
