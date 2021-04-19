@@ -80,21 +80,16 @@ def cross(new_pop, old_pop, n_pop, n_var, elit_num, cross_num, tour_size):
 
     new_pop[elit_num:elit_num+cross_num, 1:] = beta*parents1 + (1-beta)*parents2
 
-    # for i in range(0, cross_num):
-    #     parent1 = old_pop[parents_idx[i, 0], 1:]
-    #     parent2 = old_pop[parents_idx[i, 1], 1:]
-    #     new_pop[elit_num + i, 1:] = beta[i] * parent1 + (1 - beta[i]) * parent2
 
-
-def mutate(new_pop, old_pop, n_pop, mutat_num, n_var, mutat_gene, b_range, range_par):
+def mutate(new_pop, old_pop, n_pop, mutat_num, n_var, mutat_genes, b_range):
     parents_idx = np.random.randint(0, n_pop, mutat_num)
-    gene_idx = np.random.randint(1, n_var + 1, (mutat_num, mutat_gene))
-    gamma = range_par - 2*range_par * np.random.random((mutat_num, mutat_gene))
+    gene_pool = np.reshape(old_pop[parents_idx, 1:], (mutat_num*n_var))
+    gene_idx = np.random.randint(0, mutat_num*n_var, mutat_genes)
+    gamma = np.random.random(mutat_genes)
 
-    for i in range(0, mutat_num):
-        new_pop[-(i + 1), 1:] = old_pop[parents_idx[i], 1:]
-        new_pop[-(i + 1), gene_idx[i]] += gamma[i] * b_range[gene_idx[i] % 2]
+    gene_pool[gene_idx] = gamma*b_range[gene_idx % 2]
 
+    new_pop[n_pop - mutat_num:n_pop, 1:] = np.reshape(gene_pool, (mutat_num, n_var))
 
 # turbine data
 diameter = 82
