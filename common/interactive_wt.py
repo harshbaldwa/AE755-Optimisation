@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from .wake_visualization import get_wake_plots_interactive
 import numpy as np
 
-n = 33
+n = 4 
 layout = np.zeros(n*2)
 bounds = np.array([[0, 4000], [0, 3500]])
 diameter = 82

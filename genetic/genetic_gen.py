@@ -1,6 +1,6 @@
 # cost functions
-from ..common import cost as cost
-# from ..common import mosetti_cost as cost
+from ..common import cost_gen as cost
+# from ..common import mosetti_cost_gen as cost
 from ..common.windrose import read_windrose
 
 # visualization
@@ -25,17 +25,16 @@ def init_random(pop, n_pop, bounds, N):
 def init_fitness(
     pop, n_pop, bounds, diameter, height, z_0, windspeed_array, theta_array, wind_prob
 ):
-    for i in range(n_pop):
-        pop[i, 0] = cost.objective(
-            pop[i, 1:],
-            bounds,
-            diameter,
-            height,
-            z_0,
-            windspeed_array,
-            theta_array,
-            wind_prob,
-        )
+    pop[:, 0] = cost.objective(
+        pop[:, 1:],
+        bounds,
+        diameter,
+        height,
+        z_0,
+        windspeed_array,
+        theta_array,
+        wind_prob,
+    )
 
     return pop[np.argsort(pop[:, 0])]
 
@@ -51,17 +50,16 @@ def fitness(
     theta_array,
     wind_prob,
 ):
-    for i in range(elit_num, n_pop):
-        pop[i, 0] = cost.objective(
-            pop[i, 1:],
-            bounds,
-            diameter,
-            height,
-            z_0,
-            windspeed_array,
-            theta_array,
-            wind_prob,
-        )
+    pop[:, 0] = cost.objective(
+        pop[:, 1:],
+        bounds,
+        diameter,
+        height,
+        z_0,
+        windspeed_array,
+        theta_array,
+        wind_prob,
+    )
 
     return pop[np.argsort(pop[:, 0])]
 
@@ -110,7 +108,7 @@ theta_array = np.array([0])
 wind_prob = np.array([1])
 
 # Ns = np.linspace(30, 90, 13)
-Ns = [10]
+Ns = [80]
 
 for N in Ns:
     N = int(N)
@@ -144,8 +142,6 @@ for N in Ns:
         wind_prob,
     )
 
-    count = 0
-
     a = time()
 
     try:
@@ -168,7 +164,6 @@ for N in Ns:
             # print("{} - {}, {}, {}".format(gen, new_pop[0, 0], new_pop[1, 0], new_pop[2, 0]))
             old_pop = new_pop
 
-
     except KeyboardInterrupt:
         print("Getting the values from last population...\n")
 
@@ -179,11 +174,14 @@ for N in Ns:
             "n_pop: {}\nelit_num: {}\ncross: {}\nmutate_gene: {}\nrange_par: {}\ngen: {}".format(
             n_pop, elit_num, cross_frac, mutat_gene, range_par, generations
             ),
+            # "n_turb: {}\ndiameter: {}\nheight: {}\ncost_model: {}\nprofit: {}\ntime: {:.3f}s".format(
+            # N, diameter, height, 'tejas', new_pop[0, 0], b-a
             "n_turb: {}\ndiameter: {}\nheight: {}\ncost_model: {}\nprofit: ${:.3f}M\ntime: {:.3f}s".format(
             N, diameter, height, 'tejas', -new_pop[0, 0]/1e6, b-a
             ),
             "genetic/N_{}".format(N),
     ]
+    # print("Profit - {}".format(new_pop[0, 0]))
     print("Profit - ${:.3f}M".format(-new_pop[0, 0]/1e6))
     get_wake_plots(
             new_pop[0, 1::2],

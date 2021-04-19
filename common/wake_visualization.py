@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 plt.style.use('dark_background')
 
 def get_turbine_lines(x, y, diameter, height, z_0, wind, theta_dom=0):
-    print(theta_dom)
     normal = np.array([-wind[1]/(wind[0]+np.finfo(float).eps), 1])
     normal = normal/np.linalg.norm(normal)
     R = np.sqrt(2)*diameter/2
@@ -104,5 +103,4 @@ def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_a
     if os.path.exists('./opti/results/{}.png'.format(algo_data[3])):
         plt.savefig('./opti/results/{}_{}.png'.format(algo_data[3], int(time.time())))
     else:
-        plt.savefig('./code/pattern_results/{}.png'.format(algo_data[3]))
-    plt.show()
+        plt.savefig('./opti/results/{}.png'.format(algo_data[3]))
