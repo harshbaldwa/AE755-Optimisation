@@ -92,11 +92,12 @@ def annealing(
     accept = np.zeros(n)
     n_iter = int(-np.log(T/Tmin)//np.log(alpha)) +1
     iter_no = 1
-
+    conv = []
+    conv_i = []
     print(n_iter)
 
     try:
-        for _ in tqdm(range(n_iter)):
+        for mi in tqdm(range(n_iter)):
             for lm in range(Ns):
                 for i in range(Markov_no):
                     rand_nos = 2*pert*(2*np.random.random(n) -1 )
@@ -114,11 +115,14 @@ def annealing(
                             if cost < cost_best:
                                 cost_best = cost
                                 x_best = x.copy()
-                                print("Current Best", - cost_best/1e6, flush = True)
+                                conv.append(cost_best)
+                                conv_i.append(iter_no)
+                                print("{}\t{}".format(cost_best, iter_no), flush = True)
                         elif np.exp(-dcost / T) > np.random.random():
                             accept[k] += 1
                             x = xi.copy()
                             cost = cost_i
+                        iter_no +=1
                     #end for k
                 #end for i (Markov No)
 
@@ -137,61 +141,61 @@ def annealing(
             T = alpha * T
         #end for _ tqdm()
         print("T = ", T)
-        return (x_best, cost_best)
+        return (x_best, cost_best, conv, conv_i)
     except KeyboardInterrupt:
         print("\n Oops....\n\tsaving current state")
         restart = np.array([T, x, cost, x_best, cost_best], dtype=object)
         np.save( "restart.npy", restart)
         print("created Restert file")
-        return (x_best, cost_best)
+        return (x_best, cost_best, conv, conv_i)
 
 
 
 if __name__ == "__main__":
 
-    from ..common.cost import objective  #TEJAS
+    from ..common.mosetti_cost import objective   #MOSETTI
 
     from ..common.layout import Layout, random_layout
     from ..common.windrose import read_windrose
     from ..common.wake_visualization import get_wake_plots
-    # from ..common.wake_multi import get_wake_plots
     import sys
     import time
 
-    plt.style.use("dark_background")
+    # plt.style.use("dark_background")
 
-    diameter = 82
-    height = 80
+    diameter = 40
+    height = 60
     z_0 = 0.3
-    xmax = 4000
-    ymax = 3500
+    xmax = 2000
+    ymax = 2000
 
-
-    n = 33 
+    n = 22
     xbound = [0, xmax]
     ybound = [0, ymax]
     bounds = np.array([xbound, ybound])
-
-
-    filename = "siman_tejas_{}_{}".format(n, int(time.time()))
     grid = 20
+
+
+    filename = "siman_mosetti_multi_conv_{}_{}".format(n, int(time.time()))
 
     # windspeed_array, theta_array, wind_prob = read_windrose()
     windspeed_array = np.array([12])
     theta_array = np.array([0])
     wind_prob = np.array([1])
+
+
     # Nw =16
     # windspeed_array = np.array([0,12])
     # theta_array = np.linspace(0, 2*np.pi, Nw, False)
     # wind_prob = np.zeros((Nw, 2))
     # wind_prob[:,1]=1/Nw
 
-    # print(wind_prob)
-    # print(windspeed_array)
-    # print(theta_array)
-    # exit()
+    # print("W_prob",wind_prob)
+    # print("w_arr", windspeed_array)
+    # print("th", theta_array)
 
     layout = random_layout(n, xbound, ybound, grid).layout
+
     cost_in = objective(
         layout,
         bounds,
@@ -204,12 +208,12 @@ if __name__ == "__main__":
     )
 
     # sim anneal related parameters
-    alpha = 0.9
-    pert_max = 1500
+    alpha = 0.87
+    pert_max = 1000
     Markov_no = 20
-    Ns = 20
-    Tmax = 1e8 #1000 * np.abs(cost_in)
-    Tmin = 5 #np.abs(cost_in) * 10e-10
+    Ns = 12
+    Tmax = 10 #1000 * np.abs(cost_in)
+    Tmin = 1e-12 #np.abs(cost_in) * 10e-10
 
 
     sys.stdout = open("./opti/results/"+filename+".txt", "w")
@@ -230,10 +234,12 @@ if __name__ == "__main__":
         wind_prob,
         Ns,
     )
+
+
     print("initial_cost = \t" + str(cost_in))
     #### Start Annealing #####
     a = time.time()
-    xf, cb = annealing(
+    xf, cb, conv, conv_i= annealing(
         layout,
         objective,
         bounds,
@@ -253,9 +259,11 @@ if __name__ == "__main__":
     )
     
 
+    plt.plot(conv_i, conv)
+    plt.savefig(filename+".png")
     b = time.time()
-    np.save("./opti/results/"+filename+".npy", xf)
     time_required = b - a
+    np.save("./opti/results/"+filename+".npy", xf)
     print("final cost =   \t" + str(cb))
     print("time required", time_required)
     print("xf:\n", xf)
@@ -264,10 +272,10 @@ if __name__ == "__main__":
     algo_data = [
         "Sim_anneal",
         "cost_model: {}\nMarkov: {}\nNS: {}\nTmax: {}\nTmin: {}\nalpha: {}".format(
-            "Tejas",Markov_no, Ns, Tmax, Tmin, alpha
+            "Mosetti",Markov_no, Ns, Tmax, Tmin, alpha
         ),
-        "n_turb: {}\ndiameter: {}\nheight:{}\nprofit: {:.1f}\ntime: {:.3f}s".format(
-            n, diameter, height, -cb , b-a
+        "n_turb: {}\ndiameter: {}\nheight:{}\ncost: {}\ntime: {:.3f}s".format(
+            n, diameter, height, cb , b-a
         ),
         filename,
     ]
