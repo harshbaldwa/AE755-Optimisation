@@ -32,57 +32,34 @@ def get_pos(X, Y):
     return positions
 
 
-def give_direction(X,Y,step_size, E):
+def give_direction(X,step_size, E, idx):
 
     X1 = X.copy()
-    Y1 = Y
-    new = X1 + step_size
-    X1 = new
-    o1 = obj([X1, Y1])
+    new = X1[idx] + step_size
+    X1[idx] = new
+    o1 = obj(X1)
 
-    X2 = X
-    Y2 = Y
-    new = Y2 + step_size
-    Y2 = new
-    o2 = obj([X2, Y2])
+    X2 = X.copy()
+    new = X2[idx] - step_size
+    X2[idx] = new
+    o2 = obj(X2)
 
-
-    X3 = X
-    Y3 = Y
-    new = X3 - step_size
-    X3 = new
-    o3 = obj([X3, Y3])
-
-
-    X4 = X
-    Y4 = Y
-    new = Y4 - step_size
-    Y4 = new
-    o4 = obj([X4, Y4])
-
-    min_obj = np.min([o1,o2,o3,o4])
+    min_obj = np.min([o1,o2])
 
     if(o1 == min_obj and o1<E):
-        return X1, Y1
+        return X1
 
     if(o2 == min_obj and o2<E):
-        return X2, Y2
-
-    if(o3 == min_obj and o3<E):
-        return X3, Y3
-
-    if(o4 == min_obj and o4<E):
-        return X4, Y4
+        return X2
 
     else:
-        return X, Y
+        return X
 
 
-def compare(X,Y,X_old,Y_old):
+def compare(X, X_old):
     truth1 = X == X_old
-    truth2 = Y == Y_old
 
-    if (False in truth1) or (False in truth2):
+    if (False in truth1):
         return 1
     else:
         return 0
@@ -90,41 +67,33 @@ def compare(X,Y,X_old,Y_old):
 
 
 ################### Pattern Search Inputs and loops starts here ################
-n = 5
+n = 6
 
 step_size = 10
-min_step_size = 0.00001
+min_step_size = 0.000001
 
 ####### for lool for checking constrint till satisfection ######
-X = np.random.random(n)*100 - 50
-Y = np.random.random(n)*100 - 50
+X = np.random.random(n)*40 - 20
 
-pos = get_pos(X, Y)
-
-E = obj(pos)
+E = obj(X)
 
 X_old = X.copy()
-Y_old = Y.copy()
 
 ################ Generate random selection order ##############
 order = random_selection_order(n)
 
 while(step_size>min_step_size):
-    # print(step_size)
-    k = 0.0
+    print(step_size)
     while(True):
-        k += 1
         X_old = X.copy()
-        Y_old = Y.copy()
-        X, Y = give_direction(X,Y,step_size, E)
+        for i in range(n):
+            X = give_direction(X,step_size, E, order[i])
+            E = obj(X)
 
-        pos = get_pos(X, Y)
-        E = obj(pos)
-
-        if compare(X, Y, X_old, Y_old):
+        if compare(X, X_old):
             break;
 
     step_size /= 2
 
-# print(365*24*aep(positions, windspeed_array, theta_array, wind_prob, alpha, 0.5*diameter, boundary_limits)[0])
-print(X, Y)
+print(X)
+print(E)

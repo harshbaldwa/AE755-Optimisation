@@ -102,14 +102,14 @@ def compare(X,Y,X_old,Y_old):
 
 
 ################### Pattern Search Inputs and loops starts here ################
-n = 4
+n = 26
 
 # Setup - Mossetti
 X_limit = 2000
 Y_limit = 2000
 boundary_limits = np.array([[0, X_limit], [0, Y_limit]])
 step_size = 256
-min_step_size = 64
+min_step_size = 1.0
 diameter = 40
 Z_H = 60
 Z_0 = 0.3
@@ -124,21 +124,21 @@ Z_0 = 0.3
 # Z_H = 80
 # Z_0 = 0.3
 
-alpha = 0.5 / (np.log(Z_H / Z_0))
+# alpha = 0.5 / (np.log(Z_H / Z_0))
 
 # Wind Setup
 # windspeed_array = np.array([12])
 # theta_array = np.array([0.0])
 # wind_prob = np.array([1])
 
-# windspeed_array, theta_array, wind_prob = read_windrose()
+windspeed_array, theta_array, wind_prob = read_windrose()
 
-N = 4.0
-theta_array = np.linspace(0, 2*np.pi, int(N))
-windspeed_array = np.array([0, 12])
-wind_prob = np.zeros((int(N), 2))
-wind_prob[:, -1] = 1./N
-print(wind_prob)
+# N = 16.0
+# theta_array = np.linspace(0, 2*np.pi, int(N), False)
+# windspeed_array = np.array([0, 12])
+# wind_prob = np.zeros((int(N), 2))
+# wind_prob[:, -1] = 1./N
+# print(wind_prob)
 
 ####### for lool for checking constrint till satisfection ######
 X = random_cordi(n, X_limit)
@@ -156,7 +156,7 @@ Y_old = Y.copy()
 ################ Generate random selection order ##############
 order = random_selection_order(n)
 
-itr = 1
+itr = 0
 
 while(step_size>min_step_size):
     print(step_size)
@@ -181,7 +181,7 @@ while(step_size>min_step_size):
 
             E = obj(positions, boundary_limits, diameter, Z_H, Z_0, windspeed_array, theta_array, wind_prob)
 
-        itr = itr + 1
+        itr = itr + 4
         # print(E, itr)
 
         if compare(X,Y,X_old,Y_old) == 0:
@@ -201,40 +201,63 @@ while(step_size>min_step_size):
 # print(365*24*aep(positions, windspeed_array, theta_array, wind_prob, alpha, 0.5*diameter, boundary_limits)[0])
 
 
-# algo_data = [
-#     "Pattern",
-#     "n_pop: {}\nn_relocate: {}\n".format(
-#         n_pop, n_relocate
-#     ),
-#     "n_turb: {}\ndiameter: {}\nheight: {}\ncost_model: {}\nprofit: ${:.2f}M".format(
-#         n, diameter, Z_H, 'tejas', -1*E / 1e6
-#     ),
-#     "pattern_{}".format(n),
-# ]
-
 algo_data = [
     "Pattern",
     "n_pop: {}\nn_relocate: {}\n".format(
         n_pop, n_relocate
     ),
-    "n_turb: {}\ndiameter: {}\nheight: {}\ncost_model: {}\nCost: {:.6f}".format(
-        n, diameter, Z_H, 'mosetti', E
+    "n_turb: {}\ndiameter: {}\nheight: {}\ncost_model: {}\nprofit: ${:.2f}M".format(
+        n, diameter, Z_H, 'tejas', -1*E / 1e6
     ),
     "pattern_{}".format(n),
 ]
 
-get_wake_plots(
-    X,
-    Y,
-    boundary_limits,
-    diameter,
-    Z_H,
-    Z_0,
-    windspeed_array,
-    theta_array,
-    wind_prob,
-    algo_data,
-    np.pi/2
-)
+# algo_data = [
+#     "Pattern",
+#     "n_pop: {}\nn_relocate: {}\n".format(
+#         n_pop, n_relocate
+#     ),
+#     "n_turb: {}\ndiameter: {}\nheight: {}\ncost_model: {}\nCost: {:.6f}".format(
+#         n, diameter, Z_H, 'mosetti', E
+#     ),
+#     "pattern_{}".format(n),
+# ]
+
+# get_wake_plots(
+#     X,
+#     Y,
+#     boundary_limits,
+#     diameter,
+#     Z_H,
+#     Z_0,
+#     windspeed_array,
+#     theta_array,
+#     wind_prob,
+#     algo_data)
 
 print(E)
+
+positions[::2] = X
+positions[1::2] = Y
+
+print(theta_array)
+
+# for idx, theta in enumerate(theta_array):
+#     get_wake_plots(
+#     X,
+#     Y,
+#     boundary_limits,
+#     diameter,
+#     Z_H,
+#     Z_0,
+#     windspeed_array,
+#     theta_array,
+#     wind_prob,
+#     algo_data,
+#     theta,
+#     windspeed_array[idx])
+
+
+
+# E = obj(positions, boundary_limits, diameter, Z_H, Z_0, windspeed_array, theta_array, wind_prob, flag=1)
+# print(E)
