@@ -70,9 +70,10 @@ def objective(layout, boundary_limits, diameter, height, z_0, windspeed_array, t
     # area = (y_max - y_min)*(x_max - x_min)
     # land_cost = area*40878
 
-    # obj = 1191241.17052 + 521.550195949*N + 19.210518346*(N**0.751) - 0.02*AEP
-    obj = 1191241.17052 + 15.28918*L_coll + 521.550195949*N + 19.210518346*(N**0.751) - 0.02*AEP
-    # obj += 1e-4*land_cost + 1e4*penalty
+    obj = 1191241.17052 + 521.550195949*N + 19.210518346*(N**0.751) - 0.02*AEP
     obj += 1e4*penalty
+
+    # obj = 1191241.17052 + 15.28918*L_coll + 521.550195949*N + 19.210518346*(N**0.751) - 0.02*AEP
+    # obj += 1e-4*land_cost + 1e4*penalty
 
     return obj
