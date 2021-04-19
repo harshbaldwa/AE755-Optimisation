@@ -10,8 +10,8 @@ import math
 import random
 from numpy.random import rand
 # from ..common.cost import objective as obj
-# from ..common.test_functions import ackley as obj
-from ..common.test_functions import eggholder as obj
+from ..common.test_functions import holder_table as obj
+# from ..common.test_functions import himmel as obj
 
 # from ..common.mosetti_cost import objective as obj
 from ..common.wake_visualization import get_wake_plots
@@ -102,12 +102,12 @@ def compare(X,Y,X_old,Y_old):
 ################### Pattern Search Inputs and loops starts here ################
 n = 1
 
-step_size = 500
-min_step_size = 0.001
+step_size = 10.0
+min_step_size = 0.00001
 
 ####### for lool for checking constrint till satisfection ######
-X = np.random.random()*500 - 250
-Y = np.random.random()*500 - 250
+X = np.random.random()*10 - 5
+Y = np.random.random()*10 - 5
 
 E = obj([X, Y])
 
