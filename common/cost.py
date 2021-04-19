@@ -20,6 +20,8 @@ def objective(layout, boundary_limits, diameter, height, z_0, windspeed_array, t
 
     bl = boundary_limits
     midpoint = np.array([0.5 * (bl[0][0] + bl[0][1]), 0.5 * (bl[1][0] + bl[1][1])])
+    # midpoint = np.array([0, 0])
+
 
     L_coll = 0
     for i in range(N):

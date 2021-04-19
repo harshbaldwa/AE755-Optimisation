@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from tqdm import tqdm
 
 
 def write_run_info(
@@ -96,7 +95,7 @@ def annealing(
     print(n_iter)
 
     try:
-        for _ in tqdm(range(n_iter)):
+        for _ in range(n_iter):
             for lm in range(Ns):
                 for i in range(Markov_no):
                     rand_nos = 2*pert*(2*np.random.random(n) -1 )
@@ -154,7 +153,6 @@ if __name__ == "__main__":
     from ..common.layout import Layout, random_layout
     from ..common.windrose import read_windrose
     from ..common.wake_visualization import get_wake_plots
-    # from ..common.wake_multi import get_wake_plots
     import sys
     import time
 
@@ -173,23 +171,19 @@ if __name__ == "__main__":
     bounds = np.array([xbound, ybound])
 
 
-    filename = "siman_tejas_{}_{}".format(n, int(time.time()))
+    filename = "siman_tejas_rose_{}_{}".format(n, int(time.time()))
     grid = 20
 
-    # windspeed_array, theta_array, wind_prob = read_windrose()
-    windspeed_array = np.array([12])
-    theta_array = np.array([0])
-    wind_prob = np.array([1])
+    windspeed_array, theta_array, wind_prob = read_windrose()
+    # windspeed_array = np.array([12])
+    # theta_array = np.array([0])
+    # wind_prob = np.array([1])
     # Nw =16
     # windspeed_array = np.array([0,12])
     # theta_array = np.linspace(0, 2*np.pi, Nw, False)
     # wind_prob = np.zeros((Nw, 2))
     # wind_prob[:,1]=1/Nw
 
-    # print(wind_prob)
-    # print(windspeed_array)
-    # print(theta_array)
-    # exit()
 
     layout = random_layout(n, xbound, ybound, grid).layout
     cost_in = objective(
@@ -204,15 +198,19 @@ if __name__ == "__main__":
     )
 
     # sim anneal related parameters
-    alpha = 0.9
+    alpha = 0.86
     pert_max = 1500
-    Markov_no = 20
-    Ns = 20
+    Markov_no = 15
+    Ns = 15
     Tmax = 1e8 #1000 * np.abs(cost_in)
     Tmin = 5 #np.abs(cost_in) * 10e-10
 
 
     sys.stdout = open("./opti/results/"+filename+".txt", "w")
+
+    print(wind_prob)
+    print(windspeed_array)
+    print(theta_array)
     write_run_info(
         layout,
         n,

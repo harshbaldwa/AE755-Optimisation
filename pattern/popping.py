@@ -1,7 +1,7 @@
 import numpy as np
 from ..common.wake_model import aep
-from ..common.cost import objective as obj
-# from ..common.mosetti_cost import objective as obj
+# from ..common.cost import objective as obj
+from ..common.mosetti_cost import objective as obj
 
 
 
