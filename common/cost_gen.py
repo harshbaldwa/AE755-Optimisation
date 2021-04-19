@@ -1,5 +1,5 @@
 import numpy as np
-from .wake_model import aep
+from .wake_model_gen import aep
 # from constraint_check import penalty_function
 
 def objective(layout, boundary_limits, diameter, height, z_0, windspeed_array, theta_array, wind_prob):  # OBJECTIVE FUNCTION THAT WE'RE TRYING TO MINIMISE
@@ -9,7 +9,7 @@ def objective(layout, boundary_limits, diameter, height, z_0, windspeed_array, t
     # r_i = 0.02  # interest rate - inflation rate [0.02]
     # T = 20  # lifespan of farm in years [20]
     # P_rated = 1.5  # Rated power of a single turbine in kW [1.5]
-    N = int(0.5 * len(layout))  # number of turbines
+    N = int(0.5 * len(layout[0]))  # number of turbines
     D = diameter  # Rotor Diameter in m [82]
     Z_H = height  # Hub height of rotor in m [80]
     Z_0 = z_0  # Surface roughness of terrain
@@ -18,14 +18,14 @@ def objective(layout, boundary_limits, diameter, height, z_0, windspeed_array, t
     # V_M = 10000 # Voltage rating of Medium Voltage AC (MVAC) lines used for collection [10e3]
     # V_H = 100000 # Voltage rating of High Voltage AC (HVAC) lines used for transmission [100e3]
 
-    bl = boundary_limits
-    midpoint = np.array([0.5 * (bl[0][0] + bl[0][1]), 0.5 * (bl[1][0] + bl[1][1])])
+    # bl = boundary_limits
+    # midpoint = np.array([0.5 * (bl[0][0] + bl[0][1]), 0.5 * (bl[1][0] + bl[1][1])])
 
-    L_coll = 0
-    for i in range(N):
-        L_coll += np.sqrt(
-            (midpoint[0] - layout[2 * i]) ** 2 + (midpoint[1] - layout[2 * i + 1])**2
-        )
+    # L_coll = 0
+    # for i in range(N):
+    #     L_coll += np.sqrt(
+    #         (midpoint[0] - layout[:, 2 * i]) ** 2 + (midpoint[1] - layout[:, 2 * i + 1])**2
+    #     )
 
     alpha = 0.5 / (np.log(Z_H / Z_0))
     AEP, penalty = aep(layout, windspeed_array, theta_array, wind_prob, alpha, D/2, boundary_limits)
@@ -70,8 +70,8 @@ def objective(layout, boundary_limits, diameter, height, z_0, windspeed_array, t
     # area = (y_max - y_min)*(x_max - x_min)
     # land_cost = area*40878
 
-    # obj = 1191241.17052 + 521.550195949*N + 19.210518346*(N**0.751) - 0.02*AEP
-    obj = 1191241.17052 + 15.28918*L_coll + 521.550195949*N + 19.210518346*(N**0.751) - 0.02*AEP
+    obj = 1191241.17052 + 521.550195949*N + 19.210518346*(N**0.751) - 0.02*AEP
+    # obj = 1191241.17052 + 15.28918*L_coll + 521.550195949*N + 19.210518346*(N**0.751) - 0.02*AEP
     # obj += 1e-4*land_cost + 1e4*penalty
     obj += 1e4*penalty
 
