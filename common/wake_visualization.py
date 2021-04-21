@@ -82,7 +82,8 @@ def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_a
     wind: 1x2 array of x and y components of the wind.
     """
     # wind = [wind_velocity, 0]
-    fig = plt.figure(figsize=(12, 12))
+    fig = plt.figure()
+    # fig = plt.figure(figsize=(12, 12))
     get_turbine_lines(x, y, diameter, height, z_0, [windspeed_array[0], 0], theta_dom)
     get_turbine_circles(x, y, diameter)
     plt.scatter(x, y, color='gray')
@@ -99,8 +100,8 @@ def get_wake_plots(x, y, bounds, diameter, height, z_0, windspeed_array, theta_a
     plt.text(bounds[0, 0] - b_range[0], bounds[1, 1] + b_range[1] + 100, algo_data[2])
     plt.gca().set_aspect('equal')
 
-    # plt.show()
-    if os.path.exists('./opti/results/{}.png'.format(algo_data[3])):
-        plt.savefig('./opti/results/{}_{}.png'.format(algo_data[3], int(time.time())))
-    else:
-        plt.savefig('./opti/results/{}.png'.format(algo_data[3]))
+    plt.show()
+    # if os.path.exists('./opti/results/{}.png'.format(algo_data[3])):
+    #     plt.savefig('./opti/results/{}_{}.png'.format(algo_data[3], int(time.time())))
+    # else:
+    #     plt.savefig('./opti/results/{}.png'.format(algo_data[3]))

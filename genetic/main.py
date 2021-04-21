@@ -1,7 +1,7 @@
 # cost functions
-from ..common import cost_gen as cost
-# from ..common import mosetti_cost_gen as cost
-from ..common.windrose import read_windrose
+# from ..common import cost_gen as cost
+from ..common import mosetti_cost_gen as cost
+# from ..common.windrose import read_windrose
 
 # visualization
 from ..common.wake_visualization import get_wake_plots
@@ -12,12 +12,12 @@ from tqdm import tqdm as bar
 from time import time
 
 # turbine data
-diameter = 82
-height = 80
+diameter = 40
+height = 60
 z_0 = 0.3
 
 # turbines and farm
-bounds = np.array([[0, 4000], [0, 3500]])
+bounds = np.array([[0, 1000], [0, 1000]])
 
 # windspeed_array, theta_array, wind_prob = read_windrose()
 windspeed_array = np.array([12])
@@ -25,7 +25,7 @@ theta_array = np.array([0])
 wind_prob = np.array([1])
 
 
-N = 26
+N = 30
 n_pop = 200
 elit_frac = 0.05
 cross_frac = 0.8
@@ -168,13 +168,15 @@ algo_data = [
         "n_pop: {}\nelit_frac {}\ncross: {}\ntour_size: {}\nmutat_frac: {}\ngen: {}".format(
         n_pop, elit_frac, cross_frac, tour_size, mutat_frac, generations
         ),
-        "n_turb: {}\ndiameter: {}\nheight: {}\ncost_model: {}\nprofit: ${:.3f}M\ntime: {:.3f}s".format(
-        N, diameter, height, 'tejas', -new_pop[0, 0]/1e6, b-a
+        # "n_turb: {}\ndiameter: {}\nheight: {}\ncost_model: {}\nprofit: ${:.3f}M\ntime: {:.3f}s".format(
+        # N, diameter, height, 'tejas', -new_pop[0, 0]/1e6, b-a
+        "n_turb: {}\ndiameter: {}\nheight: {}\ncost_model: {}\ncost: {}\ntime: {:.3f}s".format(
+        N, diameter, height, 'mosetti', new_pop[0, 0], b-a
         ),
         "genetic/N_{}".format(N),
 ]
-# print("Profit - {}".format(new_pop[0, 0]))
-print("Profit - ${:.3f}M".format(-new_pop[0, 0]/1e6))
+print("Profit - {}".format(new_pop[0, 0]))
+# print("Profit - ${:.3f}M".format(-new_pop[0, 0]/1e6))
 get_wake_plots(
         new_pop[0, 1::2],
         new_pop[0, 2::2],
